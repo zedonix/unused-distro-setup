@@ -111,6 +111,7 @@ export prefix
 export cache
 
 export COLORTERM=truecolor
+# export TERM=screen-256color
 export EDITOR=nvim
 export VISUAL=nvim
 export SYSTEMD_EDITOR=nvim

@@ -13,5 +13,5 @@ rm ./git-delta_0.17.0_amd64.deb
 
 npm install -g tree-sitter-cli
 npm install -g stylelint stylelint-config-standard
-# pipx install uv
-# npm install -g pnpm
+
+git clone https://github.com/tmux-plugins/tpm ~/.config/tmux/plugins/tpm
