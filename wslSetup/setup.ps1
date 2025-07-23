@@ -22,9 +22,10 @@ function Install-Packages {
     @{ Id = "Git.Git"; Name = "Git" },
     @{ Id = "Microsoft.WindowsTerminal"; Name = "Windows Terminal" },
     @{ Id = "curl"; Name = "curl" },
-    @{ Id = "GnuWin32.Wget"; Name = "wget" }
     @{ Id = "Mozilla.Firefox"; Name = "Firefox" },
     @{ Id = "Microsoft.PowerToys"; Name = "PowerToys" }
+    @{ Id = "dandavison.delta"; Name = "git-delta" }
+    @{ Id = "jftuga.less"; Name = "less (modern)" }
   )
 
   foreach ($pkg in $packages) {
