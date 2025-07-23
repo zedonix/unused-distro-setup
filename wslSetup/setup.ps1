@@ -66,10 +66,79 @@ function Install-WSL2 {
   wsl --set-default-version 2
 }
 
+function Setup-FirefoxUserJS {
+    param (
+        [string]$RepoUrl = "https://github.com/zedonix/wslSetup",
+        [string]$CloneDir = "$env:USERPROFILE\Documents\wslSetup"
+    )
+
+    # 1. Clone repo if not already present
+    if (-not (Test-Path $CloneDir)) {
+        Write-Host "Cloning repo..." -ForegroundColor Cyan
+        git clone $RepoUrl $CloneDir
+    } else {
+        Write-Host "Repo already exists at $CloneDir" -ForegroundColor Yellow
+    }
+
+    # 2. Locate Firefox profile directory
+    $firefoxProfilesPath = "$env:APPDATA\Mozilla\Firefox\Profiles"
+    $profileDirs = Get-ChildItem -Path $firefoxProfilesPath -Directory | Where-Object { $_.Name -like "*.default-release" }
+
+    if ($profileDirs.Count -eq 0) {
+        Write-Host "No default Firefox profile found in $firefoxProfilesPath" -ForegroundColor Red
+        return
+    }
+
+    # 3. Copy user.js
+    $userJsSource = Join-Path $CloneDir "user.js"
+    $userJsTarget = Join-Path $profileDirs[0].FullName "user.js"
+
+    if (-not (Test-Path $userJsSource)) {
+        Write-Host "user.js not found in cloned repo." -ForegroundColor Red
+        return
+    }
+
+    Copy-Item -Path $userJsSource -Destination $userJsTarget -Force
+    Write-Host "user.js copied to: $userJsTarget" -ForegroundColor Green
+}
+
+function Setup-FirefoxPolicies {
+    param (
+        [string]$RepoPath = "$env:USERPROFILE\Documents\wslSetup"
+    )
+
+    $policySource = Join-Path $RepoPath "policies.json"
+    $firefoxDistDir = "C:\Program Files\Mozilla Firefox\distribution"
+    $policyTarget = Join-Path $firefoxDistDir "policies.json"
+
+    if (-not (Test-Path $policySource)) {
+        Write-Host "policies.json not found at $policySource" -ForegroundColor Red
+        return
+    }
+
+    if (-not (Test-Path $firefoxDistDir)) {
+        Write-Host "Firefox distribution directory not found: $firefoxDistDir" -ForegroundColor Red
+        return
+    }
+
+    try {
+        Copy-Item -Path $policySource -Destination $policyTarget -Force
+        Write-Host "policies.json copied to: $policyTarget" -ForegroundColor Green
+    }
+    catch {
+        Write-Host "`nAccess denied. You must run PowerShell as Administrator to modify:" -ForegroundColor Yellow
+        Write-Host "`t$policyTarget" -ForegroundColor Red
+        Write-Host "`nPlease copy the file manually or rerun with admin rights." -ForegroundColor Gray
+    }
+}
+
 # Execute the functions
 Ensure-Winget
 Install-Packages
 Install-IosevkaFont
+Start-Process "firefox" -Wait
+Setup-FirefoxUserJS
+Setup-FirefoxPolicies
 Install-WSL2
 
 Write-Host "`nAll tasks completed successfully." -ForegroundColor Green
