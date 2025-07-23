@@ -110,16 +110,7 @@ export logs_dir
 export prefix
 export cache
 
-export XDG_CURRENT_DESKTOP=sway
-export XDG_SESSION_DESKTOP=sway
-export XDG_SESSION_TYPE=wayland
-export QT_QPA_PLATFORM=wayland
-export QT_QPA_PLATFORMTHEME=qt6ct
-export QT_STYLE_OVERRIDE=kvantum
-
-export TERMINAL=foot
 export COLORTERM=truecolor
-
 export EDITOR=nvim
 export VISUAL=nvim
 export SYSTEMD_EDITOR=nvim
@@ -136,16 +127,11 @@ alias ip='ip -color=auto'
 alias grep='grep --color=auto'
 alias df="df -h"
 
-alias mute="wpctl set-mute @DEFAULT_AUDIO_SOURCE@ 1"
-alias unmute="wpctl set-mute @DEFAULT_AUDIO_SOURCE@ 0"
-
+alias c="clear"
 alias cp='cp -iv'
 alias mv='mv -iv'
 alias trash="trash -v"
 alias cd="z"
-
-alias c="clear"
-alias x="exit"
 
 alias vim="nvim"
 alias vi="nvim"
@@ -154,10 +140,5 @@ alias vimdiff="nvim -d"
 alias diffs='export DELTA_FEATURES=+side-by-side; git diff'
 alias diffl='export DELTA_FEATURES=+; git diff'
 
-alias img="swayimg"
-
-alias jrctl="journalctl -p 3 -xb"
-alias grub-mkconfig="sudo grub-mkconfig -o /boot/grub/grub.cfg"
-
-source /usr/share/wikiman/widgets/widget.bash
+# source /usr/share/wikiman/widgets/widget.bash
 eval "$(zoxide init bash)"
