@@ -155,7 +155,44 @@ Set-ItemProperty -Path $regPath -Name VisualFXSetting -Value 2
 $fxPath = "HKCU:\Control Panel\Desktop"
 Set-ItemProperty -Path $fxPath -Name "UserPreferencesMask" -Value ([byte[]](0x90,0x12,0x03,0x80,0x10,0x00,0x00,0x00))  # disables most effects except smooth font edges
 
+# === Disable Hibernation & Fast Startup ===
+
+# Turn off hibernation (removes hiberfile and powers off completely)
+powercfg /hibernate off
+
+# Disable Fast Startup (Windows “hybrid shutdown”)
+#   - This registry key is only honored when hibernation is on, but setting it explicitly is good practice
+Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Power" `
+  -Name "HiberbootEnabled" -Value 0 -PropertyType DWord -Force
+
+# Disable Hybrid Sleep (so sleep isn’t a mix of standby+hibernate)
+powercfg /SETACVALUEINDEX SCHEME_CURRENT SUB_SLEEP STANDBYHYBRID 0
+powercfg /SETDCVALUEINDEX SCHEME_CURRENT SUB_SLEEP STANDBYHYBRID 0
+
+# (Optional) If you want “Sleep” itself gone, force everything to shut down:
+powercfg /SETACVALUEINDEX SCHEME_CURRENT SUB_SLEEP STANDBYIDLE 0
+powercfg /SETDCVALUEINDEX SCHEME_CURRENT SUB_SLEEP STANDBYIDLE 0
+
+# Ensure the changes take effect immediately by restarting the Power service
+Stop-Service -Name "SysMain" -ErrorAction SilentlyContinue
+Start-Service -Name "SysMain" -ErrorAction SilentlyContinue
+
+Write-Host "Hibernation, fast startup, and hybrid‑sleep disabled." -ForegroundColor Green
+
 # Enable long path support:
 New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem" -Name "LongPathsEnabled" -Value 1 -PropertyType DWord -Force
+
+# Open Explorer to "This PC" instead of Quick Access
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "LaunchTo" -Value 1
+
+# Show hidden files and folders
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "Hidden" -Value 1
+
+# Show file extensions for known file types
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "HideFileExt" -Value 0
+
+# Restart Explorer to apply changes immediately
+Stop-Process -Name explorer -Force
+Start-Process explorer.exe
 
 Write-Host "`nAll tasks completed successfully." -ForegroundColor Green
