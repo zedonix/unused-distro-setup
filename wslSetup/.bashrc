@@ -28,7 +28,7 @@ parse_git_branch() {
     ahead_behind="${ahead_behind%" "}"
   fi
 
-  status="$ahead_behind $branch$staged$dirty$untracked "
+  status="${ahead_behind:+$ahead_behind }$branch$staged$dirty$untracked"
   echo -e " \033[1;33m(${status})\033[0m"
 }
 
