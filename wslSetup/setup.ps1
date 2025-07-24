@@ -5,6 +5,9 @@ if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
   exit 1
 }
 
+# Global static path to local repo
+[string]$RepoPath = "$env:USERPROFILE\Downloads\wslSetup-main"
+
 # Function to install winget if missing
 function Ensure-Winget {
   if (-not (Get-Command winget -ErrorAction SilentlyContinue)) {
@@ -21,10 +24,9 @@ function Install-Packages {
   $packages = @(
     @{ Id = "Git.Git"; Name = "Git" },
     @{ Id = "Microsoft.WindowsTerminal"; Name = "Windows Terminal" },
-    @{ Id = "curl"; Name = "curl" },
     @{ Id = "Mozilla.Firefox"; Name = "Firefox" },
-    @{ Id = "Microsoft.PowerToys"; Name = "PowerToys" }
-    @{ Id = "dandavison.delta"; Name = "git-delta" }
+    @{ Id = "Microsoft.PowerToys"; Name = "PowerToys" },
+    @{ Id = "dandavison.delta"; Name = "git-delta" },
     @{ Id = "jftuga.less"; Name = "less (modern)" }
   )
 
@@ -48,8 +50,7 @@ function Install-IosevkaFont {
   $fonts = Get-ChildItem -Path $extractPath -Filter *.ttf
   foreach ($font in $fonts) {
     Copy-Item $font.FullName -Destination "$env:WINDIR\Fonts"
-    $name = $font.Name
-    Write-Host "Installed font: $name"
+    Write-Host "Installed font: $($font.Name)"
   }
 }
 
@@ -66,21 +67,8 @@ function Install-WSL2 {
   wsl --set-default-version 2
 }
 
+# Function to copy user.js to Firefox profile
 function Setup-FirefoxUserJS {
-param (
-    [string]$RepoUrl = "https://github.com/zedonix/wslSetup",
-    [string]$CloneDir = "$env:USERPROFILE\Documents\wslSetup"
-  )
-
-  # 1. Clone repo if not already present
-  if (-not (Test-Path $CloneDir)) {
-    Write-Host "Cloning repo..." -ForegroundColor Cyan
-    git clone $RepoUrl $CloneDir
-  } else {
-    Write-Host "Repo already exists at $CloneDir" -ForegroundColor Yellow
-  }
-
-  # 2. Locate Firefox profile directory
   $firefoxProfilesPath = "$env:APPDATA\Mozilla\Firefox\Profiles"
   $profileDirs = Get-ChildItem -Path $firefoxProfilesPath -Directory | Where-Object { $_.Name -like "*.default-release" }
 
@@ -89,12 +77,11 @@ param (
     return
   }
 
-  # 3. Copy user.js
-  $userJsSource = Join-Path $CloneDir "user.js"
+  $userJsSource = Join-Path $RepoPath "user.js"
   $userJsTarget = Join-Path $profileDirs[0].FullName "user.js"
 
   if (-not (Test-Path $userJsSource)) {
-    Write-Host "user.js not found in cloned repo." -ForegroundColor Red
+    Write-Host "user.js not found in local repo." -ForegroundColor Red
     return
   }
 
@@ -102,11 +89,8 @@ param (
   Write-Host "user.js copied to: $userJsTarget" -ForegroundColor Green
 }
 
+# Function to copy policies.json to Firefox distribution directory
 function Setup-FirefoxPolicies {
-param (
-    [string]$RepoPath = "$env:USERPROFILE\Documents\wslSetup"
-  )
-
   $policySource = Join-Path $RepoPath "policies.json"
   $firefoxDistDir = "C:\Program Files\Mozilla Firefox\distribution"
   $policyTarget = Join-Path $firefoxDistDir "policies.json"
@@ -124,19 +108,15 @@ param (
   try {
     Copy-Item -Path $policySource -Destination $policyTarget -Force
     Write-Host "policies.json copied to: $policyTarget" -ForegroundColor Green
-  }
-  catch {
+  } catch {
     Write-Host "`nAccess denied. You must run PowerShell as Administrator to modify:" -ForegroundColor Yellow
     Write-Host "`t$policyTarget" -ForegroundColor Red
     Write-Host "`nPlease copy the file manually or rerun with admin rights." -ForegroundColor Gray
   }
 }
 
+# Function to copy .gitconfig
 function Setup-GitConfig {
-param (
-    [string]$RepoPath = "$env:USERPROFILE\Documents\wslSetup"
-  )
-
   $gitConfigSource = Join-Path $RepoPath ".gitconfig"
   $gitConfigTarget = Join-Path $env:USERPROFILE ".gitconfig"
 
@@ -149,14 +129,33 @@ param (
   Write-Host ".gitconfig copied to: $gitConfigTarget" -ForegroundColor Green
 }
 
-# Execute the functions
+# ==== Execute ====
+
 Ensure-Winget
 Install-Packages
 Setup-GitConfig
 Install-IosevkaFont
+
+# Launch Firefox once to ensure profile gets created
 Start-Process "firefox" -Wait
+
 Setup-FirefoxUserJS
 Setup-FirefoxPolicies
 Install-WSL2
+
+# Windows settings Tweaks
+# Set mouse acceleration off
+Set-ItemProperty -Path "HKCU:\Control Panel\Mouse" -Name "MouseSpeed" -Value "0"
+Set-ItemProperty -Path "HKCU:\Control Panel\Mouse" -Name "MouseThreshold1" -Value "0"
+Set-ItemProperty -Path "HKCU:\Control Panel\Mouse" -Name "MouseThreshold2" -Value "0"
+
+# Enable only "Smooth edges of screen fonts"
+$regPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects"
+Set-ItemProperty -Path $regPath -Name VisualFXSetting -Value 2
+$fxPath = "HKCU:\Control Panel\Desktop"
+Set-ItemProperty -Path $fxPath -Name "UserPreferencesMask" -Value ([byte[]](0x90,0x12,0x03,0x80,0x10,0x00,0x00,0x00))  # disables most effects except smooth font edges
+
+# Enable long path support:
+New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem" -Name "LongPathsEnabled" -Value 1 -PropertyType DWord -Force
 
 Write-Host "`nAll tasks completed successfully." -ForegroundColor Green
