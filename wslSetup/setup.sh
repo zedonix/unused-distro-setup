@@ -11,7 +11,6 @@ wget https://github.com/dandavison/delta/releases/download/0.17.0/git-delta_0.17
 sudo apt install ./git-delta_0.17.0_amd64.deb
 rm ./git-delta_0.17.0_amd64.deb
 
-npm install -g tree-sitter-cli
-npm install -g stylelint stylelint-config-standard
+npm install -g tree-sitter-cli stylelint stylelint-config-standard
 
 git clone https://github.com/tmux-plugins/tpm ~/.config/tmux/plugins/tpm
