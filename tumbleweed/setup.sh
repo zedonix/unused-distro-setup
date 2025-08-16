@@ -69,9 +69,9 @@ if [[ "$hardware" == "hardware" ]]; then
   esac
 fi
 
-sudo zypper ar -f obs://home:amirsina Tumbleweed-Persepolis
+sudo zypper --gpg-auto-import-keys ar -f obs://home:amirsina Tumbleweed-Persepolis
 sudo zypper refresh
-xargs -a pkglist.txt sudo zypper install
+xargs -a pkglist.txt sudo zypper install -y
 sudo npm install -g stylelint stylelint-config-standard
 
 cd "$(mktemp -d)"
