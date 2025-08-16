@@ -71,6 +71,7 @@ fi
 
 sudo zypper ar -f obs://home:amirsina Tumbleweed-Persepolis
 sudo zypper ar -f obs://home:iDesmI ananicy-cpp
+sudo zypper ar -f obs://home:Sauerland foomatic-db-engine
 sudo zypper refresh
 xargs -a pkglist.txt sudo zypper install -y
 sudo npm install -g stylelint stylelint-config-standard
