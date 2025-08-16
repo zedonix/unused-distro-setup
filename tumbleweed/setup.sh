@@ -3,6 +3,10 @@ set -euo pipefail
 SCRIPT_DIR=$(dirname "$(realpath "$0")")
 cd "$SCRIPT_DIR"
 
+# LOGFILE="${HOME}/fedora_setup.log"
+: >"${LOGFILE}"
+exec > >(tee -a "$LOGFILE") 2>&1
+
 username=piyush
 
 # Which type of install?
