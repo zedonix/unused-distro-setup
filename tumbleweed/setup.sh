@@ -9,6 +9,18 @@ cd "$SCRIPT_DIR"
 
 username=piyush
 
+# Hostname
+while true; do
+  read -p "Hostname: " hostname
+  if [[ ! "$hostname" =~ ^[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?$ ]]; then
+    echo "Invalid hostname. Use 1-63 letters, digits, or hyphens (not starting or ending with hyphen)."
+    continue
+  fi
+  break
+done
+sudo hostnamectl set-hostname "$hostname"
+sudo sed -i "s/^127\.0\.1\.1.*/127.0.1.1    $hostname/" /etc/hosts
+
 # Which type of install?
 # First choice: vm or hardware
 echo "Choose one:"
@@ -71,7 +83,6 @@ fi
 
 sudo zypper ar -f obs://home:amirsina Tumbleweed-Persepolis
 sudo zypper ar -f obs://home:iDesmI ananicy-cpp
-sudo zypper ar -f obs://home:Sauerland foomatic-db-engine
 sudo zypper refresh
 xargs -a pkglist.txt sudo zypper install -y
 sudo npm install -g stylelint stylelint-config-standard
@@ -94,8 +105,7 @@ sudo install -Dm755 target/release/wl-clip-persist /usr/local/bin/wl-clip-persis
 cd ..
 git clone https://codeberg.org/fairyglade/ly.git
 cd ly
-make
-sudo make install
+sudo zig build installexe -Dinit_system=systemd
 # Satty
 wget -q https://github.com/gabm/Satty/releases/download/v0.19.0/satty-x86_64-unknown-linux-gnu.tar.gz
 tar xf satty-x86_64-unknown-linux-gnu.tar.gz
