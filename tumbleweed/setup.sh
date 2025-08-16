@@ -83,7 +83,8 @@ fi
 
 sudo zypper ar -f obs://home:amirsina Tumbleweed-Persepolis
 sudo zypper ar -f obs://home:iDesmI ananicy-cpp
-sudo zypper refresh
+sudo zypper clean --all
+sudo zypper refresh --force
 xargs -a pkglist.txt sudo zypper install -y
 sudo npm install -g stylelint stylelint-config-standard
 
