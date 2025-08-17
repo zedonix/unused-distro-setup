@@ -40,22 +40,9 @@ fi
 # Main package selection
 case "$hardware" in
 vm)
-  sed -n '1p;3p' pkgs.txt | tr ' ' '\n' | grep -v '^$' >>pkglist.txt
+  sed -n '1p;2p' pkgs.txt | tr ' ' '\n' | grep -v '^$' >>pkglist.txt
   ;;
 hardware)
-  # For hardware:max, we will add lines 5 and/or 6 later based on $extra
-  sed -n '1,4p' pkgs.txt | tr ' ' '\n' | grep -v '^$' >>pkglist.txt
-  ;;
-esac
-
-# Which type of packages?
-# Main package selection
-case "$hardware" in
-vm)
-  sed -n '1p;3p' pkgs.txt | tr ' ' '\n' | grep -v '^$' >>pkglist.txt
-  ;;
-hardware)
-  # For hardware:max, we will add lines 5 and/or 6 later based on $extra
   sed -n '1,3p' pkgs.txt | tr ' ' '\n' | grep -v '^$' >>pkglist.txt
   ;;
 esac
@@ -64,22 +51,18 @@ esac
 if [[ "$hardware" == "hardware" ]]; then
   case "$extra" in
   laptop)
-    # Add both line 5 and 6
     sed -n '4,5p' pkgs.txt | tr ' ' '\n' | grep -v '^$' >>pkglist.txt
     ;;
   bluetooth)
-    # Add only line 5
     sed -n '4p' pkgs.txt | tr ' ' '\n' | grep -v '^$' >>pkglist.txt
     ;;
-  none)
-    # Do not add line 5 or 6
-    ;;
+  none) ;;
   esac
 fi
 
 sudo zypper ar -f obs://home:amirsina Tumbleweed-Persepolis
 sudo zypper ar -f obs://home:iDesmI ananicy-cpp
-sudo zypper ar -cfp 90 https://ftp.gwdg.de/pub/linux/packman/suse/openSUSE_Tumbleweed/ packman
+sudo zypper ar -cfp 90 https://ftp.gwdg.de/pub/linux/misc/packman/suse/openSUSE_Tumbleweed/ packman
 sudo zypper ar -cfp 98 http://codecs.opensuse.org/openh264/openSUSE_Tumbleweed/ openh264
 sudo zypper ref
 sudo zypper dup --from packman --allow-vendor-change
