@@ -63,8 +63,7 @@ fi
 sudo zypper ar -f obs://home:amirsina Tumbleweed-Persepolis
 sudo zypper ar -f obs://home:iDesmI ananicy-cpp
 sudo zypper ar -cfp 90 http://ftp.gwdg.de/pub/linux/misc/packman/suse/openSUSE_Tumbleweed/Essentials packman-essentials
-sudo zypper addrepo https://download.opensuse.org/repositories/devel:languages:python/openSUSE_Tumbleweed/devel:languages:python.repo devel:languages:python
-sudo zypper ar -cfp 98 http://codecs.opensuse.org/openh264/openSUSE_Tumbleweed/ openh264
+sudo zypper ar -f https://download.opensuse.org/repositories/devel:languages:python/openSUSE_Tumbleweed/devel:languages:python.repo
 sudo zypper ref
 sudo zypper dup --from packman-essentials --allow-vendor-change
 xargs -a pkglist.txt sudo zypper install -y
