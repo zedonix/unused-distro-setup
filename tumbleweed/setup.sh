@@ -62,7 +62,8 @@ fi
 
 sudo zypper ar -f obs://home:amirsina Tumbleweed-Persepolis
 sudo zypper ar -f obs://home:iDesmI ananicy-cpp
-sudo zypper ar -cfp 90 https://ftp.gwdg.de/pub/linux/misc/packman/suse/openSUSE_Tumbleweed/ packman
+sudo zypper ar -cfp 90 https://download.opensuse.org/repositories/packman/openSUSE_Tumbleweed/ packman
+sudo zypper addrepo https://download.opensuse.org/repositories/devel:languages:python/openSUSE_Tumbleweed/devel:languages:python.repo devel:languages:python
 sudo zypper ar -cfp 98 http://codecs.opensuse.org/openh264/openSUSE_Tumbleweed/ openh264
 sudo zypper ref
 sudo zypper dup --from packman --allow-vendor-change
