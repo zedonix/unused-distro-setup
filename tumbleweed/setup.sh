@@ -83,8 +83,9 @@ fi
 
 sudo zypper ar -f obs://home:amirsina Tumbleweed-Persepolis
 sudo zypper ar -f obs://home:iDesmI ananicy-cpp
-sudo zypper clean --all
-sudo zypper refresh --force
+sudo zypper ar -cfp 90 https://ftp.gwdg.de/pub/linux/packman/suse/openSUSE_Tumbleweed/ packman
+sudo zypper ref
+sudo zypper dup --from packman --allow-vendor-change
 xargs -a pkglist.txt sudo zypper install -y
 sudo npm install -g stylelint stylelint-config-standard
 
