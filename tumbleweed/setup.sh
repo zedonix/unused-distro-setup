@@ -72,14 +72,14 @@ xargs -a pkglist.txt sudo zypper install -y
 sudo npm install -g stylelint stylelint-config-standard
 
 cd "$(mktemp -d)"
-# wikiman
-RPM_URL=$(curl -s https://api.github.com/repos/filiparag/wikiman/releases/latest |
-  grep "browser_download_url" |
-  grep -E "wikiman.*\.rpm" |
-  cut -d '"' -f 4)
-curl -LO "$RPM_URL"
-RPM_FILE="${RPM_URL##*/}"
-sudo zypper in "$RPM_FILE"
+# # wikiman
+# RPM_URL=$(curl -s https://api.github.com/repos/filiparag/wikiman/releases/latest |
+#   grep "browser_download_url" |
+#   grep -E "wikiman.*\.rpm" |
+#   cut -d '"' -f 4)
+# curl -LO "$RPM_URL"
+# RPM_FILE="${RPM_URL##*/}"
+# sudo zypper in "$RPM_FILE"
 # wl-clip-persist
 git clone https://github.com/bugaevc/wl-clip-persist.git
 cd wl-clip-persist
