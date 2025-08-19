@@ -68,8 +68,12 @@ sudo zypper ar -cfp 90 http://ftp.gwdg.de/pub/linux/misc/packman/suse/openSUSE_T
 sudo zypper rr repo-openh264
 sudo zypper ref -f
 sudo zypper dup --from packman --allow-vendor-change
+
 xargs -a pkglist.txt sudo zypper install -y
 sudo npm install -g stylelint stylelint-config-standard
+python3 -m pip install --user pipx
+python3 -m pipx ensurepath
+python3 -m pip install --user uv
 
 cd "$(mktemp -d)"
 # # wikiman
