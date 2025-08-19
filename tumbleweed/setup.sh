@@ -72,6 +72,8 @@ sudo zypper dup --from packman --allow-vendor-change
 xargs -a pkglist.txt sudo zypper install -y
 sudo npm install -g stylelint stylelint-config-standard
 
+read
+
 cd "$(mktemp -d)"
 # # wikiman
 # RPM_URL=$(curl -s https://api.github.com/repos/filiparag/wikiman/releases/latest |
@@ -82,10 +84,10 @@ cd "$(mktemp -d)"
 # RPM_FILE="${RPM_URL##*/}"
 # sudo zypper in "$RPM_FILE"
 # wl-clip-persist
-git clone https://github.com/bugaevc/wl-clip-persist.git
-cd wl-clip-persist
-cargo build --release
-sudo install -Dm755 target/release/wl-clip-persist /usr/local/bin/wl-clip-persist
+# git clone https://github.com/Linus789/wl-clip-persist.git
+# cd wl-clip-persist
+# cargo build --release
+# sudo install -Dm755 target/release/wl-clip-persist /usr/local/bin/wl-clip-persist
 # ly
 cd ..
 git clone https://codeberg.org/fairyglade/ly.git
