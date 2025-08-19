@@ -60,7 +60,7 @@ if [[ "$hardware" == "hardware" ]]; then
   esac
 fi
 
-sudo zypper ar -f https://download.opensuse.org/repositories/devel:languages:python/openSUSE_Tumbleweed/devel:languages:python.repo
+# sudo zypper ar -f https://download.opensuse.org/repositories/devel:languages:python/openSUSE_Tumbleweed/devel:languages:python.repo
 sudo zypper ar -f obs://home:amirsina Tumbleweed-Persepolis
 sudo zypper ar -f obs://home:iDesmI ananicy-cpp
 # sudo zypper ar -f http://codecs.opensuse.org/openh264/openSUSE_Tumbleweed repo-openh264
