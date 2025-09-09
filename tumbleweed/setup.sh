@@ -61,7 +61,6 @@ if [[ "$hardware" == "hardware" ]]; then
 fi
 
 sudo zypper ar -f https://download.opensuse.org/repositories/devel:languages:python/openSUSE_Tumbleweed/devel:languages:python.repo
-sudo zypper ar -f obs://home:amirsina Tumbleweed-Persepolis
 sudo zypper ar -f obs://home:iDesmI ananicy-cpp
 # sudo zypper ar -f http://codecs.opensuse.org/openh264/openSUSE_Tumbleweed repo-openh264
 sudo zypper ar -cfp 90 http://ftp.gwdg.de/pub/linux/misc/packman/suse/openSUSE_Tumbleweed/ packman
@@ -107,35 +106,36 @@ rm IosevkaTerm.zip
 python3 -m pip install --user unp
 
 # Copy config and dotfiles as the user
-mkdir -p ~/Downloads ~/Documents ~/Public ~/Templates ~/Videos ~/Pictures/Screenshots ~/.config
-mkdir -p ~/Projects/work ~/Projects/sandbox
-mkdir -p ~/Knowledge/wiki ~/Knowledge/reference ~/Knowledge/notes
-mkdir -p ~/.local/bin ~/.cache/cargo-target ~/.local/state/bash ~/.local/state/zsh
-touch ~/.local/state/bash/history ~/.local/state/zsh/history
+mkdir -p ~/Downloads ~/Desktop ~/Public ~/Templates ~/Videos ~/Pictures/Screenshots/temp ~/.config
+mkdir -p ~/Documents/projects/work ~/Documents/projects/sandbox ~/Documents/personal/wiki
+mkdir -p ~/.local/bin ~/.cache/cargo-target ~/.local/state/bash ~/.local/state/zsh ~/.local/share/wineprefixes
+touch ~/.local/state/bash/history ~/.local/state/zsh/history ~/Documents/personal/wiki/index.txt
 
-git clone https://github.com/zedonix/scripts.git ~/Projects/personal/scripts
-git clone https://github.com/zedonix/dotfiles.git ~/Projects/personal/dotfiles
-git clone https://github.com/zedonix/archsetup.git ~/Projects/personal/archsetup
-git clone https://github.com/zedonix/notes.git ~/Projects/personal/notes
-git clone https://github.com/zedonix/GruvboxGtk.git ~/Projects/personal/GruvboxGtk
-git clone https://github.com/zedonix/GruvboxQT.git ~/Projects/personal/GruvboxQT
-git clone https://github.com/zedonix/fedora_setup.git ~/Projects/personal/fedora_setup
-git clone https://github.com/CachyOS/ananicy-rules.git ~/Downloads/ananicy-rules
+git clone https://github.com/zedonix/scripts.git ~/Documents/projects/default/scripts
+git clone https://github.com/zedonix/dotfiles.git ~/Documents/projects/default/dotfiles
+git clone https://github.com/zedonix/archsetup.git ~/Documents/projects/default/archsetup
+git clone https://github.com/zedonix/notes.git ~/Documents/projects/default/notes
+git clone https://github.com/zedonix/GruvboxGtk.git ~/Documents/projects/default/GruvboxGtk
+git clone https://github.com/zedonix/GruvboxQT.git ~/Documents/projects/default/GruvboxQT
 
-if [[ -d ~/Projects/personal/dotfiles ]]; then
-  cp ~/Projects/personal/dotfiles/.config/sway/archLogo.png ~/Pictures/ 2>/dev/null || true
-  cp ~/Projects/personal/dotfiles/pics/* ~/Pictures/ 2>/dev/null || true
-  cp -r ~/Projects/personal/dotfiles/.local/share/themes/Gruvbox-Dark ~/.local/share/themes/ 2>/dev/null || true
-  ln -sf ~/Projects/personal/dotfiles/.bashrc ~/.bashrc 2>/dev/null || true
-  ln -sf ~/Projects/personal/dotfiles/.zshrc ~/.zshrc 2>/dev/null || true
+if [[ -d ~/Documents/projects/default/dotfiles ]]; then
+  cp ~/Documents/projects/default/dotfiles/.config/sway/archLogo.png ~/Pictures/
+  cp ~/Documents/projects/default/dotfiles/pics/* ~/Pictures/
+  cp -r ~/Documents/projects/default/dotfiles/.local/share/themes/Gruvbox-Dark ~/.local/share/themes/
+  ln -sf ~/Documents/projects/default/dotfiles/.bashrc ~/.bashrc
+  ln -sf ~/Documents/projects/default/dotfiles/.zshrc ~/.zshrc
 
-  for link in ~/Projects/personal/dotfiles/.config/*; do
-    ln -sf "$link" ~/.config/ 2>/dev/null || true
+  for link in ~/Documents/projects/default/dotfiles/.config/*; do
+    ln -sf "$link" ~/.config/
   done
-  for link in ~/Projects/personal/scripts/bin/*; do
-    ln -sf "$link" ~/.local/bin 2>/dev/null || true
+  for link in ~/Documents/projects/default/dotfiles/.copy/*; do
+    cp -r "$link" ~/.config/
+  done
+  for link in ~/Documents/projects/default/scripts/bin/*; do
+    ln -sf "$link" ~/.local/bin/
   done
 fi
+
 # Clone tpm
 git clone https://github.com/tmux-plugins/tpm ~/.config/tmux/plugins/tpm
 
@@ -156,33 +156,50 @@ sudo env hardware="$hardware" extra="$extra" username="$username" bash <<'EOF'
   mkdir -p ~/.config ~/.local/state/bash ~/.local/state/zsh
   echo '[[ -f ~/.bashrc ]] && . ~/.bashrc' >~/.bash_profile
   touch ~/.local/state/zsh/history ~/.local/state/bash/history
-  ln -sf /home/$username/Projects/personal/dotfiles/.bashrc ~/.bashrc 2>/dev/null || true
-  ln -sf /home/$username/Projects/personal/dotfiles/.zshrc ~/.zshrc 2>/dev/null || true
-  ln -sf /home/$username/Projects/personal/dotfiles/.config/nvim/ ~/.config
+  ln -sf /home/$username/Documents/projects/default/dotfiles/.bashrc ~/.bashrc
+  ln -sf /home/$username/Documents/projects/default/dotfiles/.zshrc ~/.zshrc
+  ln -sf /home/$username/Documents/projects/default/dotfiles/.config/starship.toml ~/.config
+  ln -sf /home/$username/Documents/projects/default/dotfiles/.config/nvim/ ~/.config
 
-  # Setup QT theme
-  THEME_SRC="/home/$username/Projects/personal/GruvboxQT/"
+  # Setup Gruvbox theme
+  THEME_SRC="/home/$username/Documents/projects/default/GruvboxQT"
   THEME_DEST="/usr/share/Kvantum/Gruvbox"
   mkdir -p "$THEME_DEST"
-  cp "$THEME_SRC/gruvbox-kvantum.kvconfig" "$THEME_DEST/Gruvbox.kvconfig" 2>/dev/null || true
-  cp "$THEME_SRC/gruvbox-kvantum.svg" "$THEME_DEST/Gruvbox.svg" 2>/dev/null || true
+  cp "$THEME_SRC/gruvbox-kvantum.kvconfig" "$THEME_DEST/Gruvbox.kvconfig"
+  cp "$THEME_SRC/gruvbox-kvantum.svg" "$THEME_DEST/Gruvbox.svg"
 
-  # Install CachyOS Ananicy Rules
-  ANANICY_RULES_SRC="/home/$username/Downloads/ananicy-rules"
-  mkdir -p /etc/ananicy.d
+  THEME_SRC="/home/$username/Documents/projects/default/GruvboxGtk"
+  THEME_DEST="/usr/share"
+  cp -r "$THEME_SRC/themes/Gruvbox-Material-Dark" "$THEME_DEST/themes"
+  cp -r "$THEME_SRC/icons/Gruvbox-Material-Dark" "$THEME_DEST/icons"
 
-  cp -r "$ANANICY_RULES_SRC/00-default" /etc/ananicy.d/ 2>/dev/null || true
-  cp "$ANANICY_RULES_SRC/"*.rules /etc/ananicy.d/ 2>/dev/null || true
-  cp "$ANANICY_RULES_SRC/00-cgroups.cgroups" /etc/ananicy.d/ 2>/dev/null || true
-  cp "$ANANICY_RULES_SRC/00-types.types" /etc/ananicy.d/ 2>/dev/null || true
-  cp "$ANANICY_RULES_SRC/ananicy.conf" /etc/ananicy.d/ 2>/dev/null || true
-
-  chmod -R 644 /etc/ananicy.d/*
-  chmod 755 /etc/ananicy.d/00-default
+  # Anancy-cpp rules
+  git clone --depth=1 https://github.com/RogueScholar/ananicy.git
+  git clone --depth=1 https://github.com/CachyOS/ananicy-rules.git
+  mkdir -p /etc/ananicy.d/roguescholar /etc/ananicy.d/zz-cachyos
+  cp -r ananicy/ananicy.d/* /etc/ananicy.d/roguescholar/
+  cp -r ananicy-rules/00-default/* /etc/ananicy.d/zz-cachyos/
+  cp -r ananicy-rules/00-types.types /etc/ananicy.d/zz-cachyos/
+  cp -r ananicy-rules/00-cgroups.cgroups /etc/ananicy.d/zz-cachyos/
+  tee /etc/ananicy.d/ananicy.conf >/dev/null <<'EOF'
+check_freq = 15
+cgroup_load = false
+type_load = true
+rule_load = true
+apply_nice = true
+apply_latnice = true
+apply_ionice = true
+apply_sched = true
+apply_oom_score_adj = true
+apply_cgroup = true
+loglevel = info
+log_applied_rule = false
+cgroup_realtime_workaround = false
+EOF
 
   # Firefox policy
   mkdir -p /etc/firefox/policies
-  ln -sf "/home/$username/Projects/personal/dotfiles/policies.json" /etc/firefox/policies/policies.json 2>/dev/null || true
+  ln -sf "/home/$username/Documents/projects/default/dotfiles/policies.json" /etc/firefox/policies/policies.json
 
   # tldr wiki setup
   curl -L "https://raw.githubusercontent.com/filiparag/wikiman/master/Makefile" -o "wikiman-makefile"
@@ -211,8 +228,8 @@ sudo env hardware="$hardware" extra="$extra" username="$username" bash <<'EOF'
   systemctl disable NetworkManager-wait-online.service systemd-networkd.service systemd-resolved getty@tty2
 
   # prevent networkmanager from using systemd-resolved
-  mkdir -p /etc/networkmanager/conf.d
-  printf "[main]\nsystemd-resolved=false\n" | sudo tee /etc/networkmanager/conf.d/no-systemd-resolved.conf
+  # mkdir -p /etc/networkmanager/conf.d
+  # printf "[main]\nsystemd-resolved=false\n" | sudo tee /etc/networkmanager/conf.d/no-systemd-resolved.conf
 
   # firewalld setup
   # firewall-cmd --set-default-zone=public
@@ -240,12 +257,12 @@ sudo env hardware="$hardware" extra="$extra" username="$username" bash <<'EOF'
 EOF
 
 # Configure static IP, gateway, and custom DNS
-sudo tee /etc/NetworkManager/conf.d/dns.conf >/dev/null <<EOF
-[main]
-dns=none
-systemd-resolved=false
-EOF
-sudo systemctl restart NetworkManager
+# sudo tee /etc/NetworkManager/conf.d/dns.conf >/dev/null <<EOF
+# [main]
+# dns=none
+# systemd-resolved=false
+# EOF
+# sudo systemctl restart NetworkManager
 
 # Flatpak setup
 flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
