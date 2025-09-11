@@ -92,18 +92,21 @@ cd ..
 git clone https://codeberg.org/fairyglade/ly.git
 cd ly
 sudo zig build installexe -Dinit_system=systemd
-# Satty
-wget -q https://github.com/gabm/Satty/releases/download/v0.19.0/satty-x86_64-unknown-linux-gnu.tar.gz
-tar xf satty-x86_64-unknown-linux-gnu.tar.gz
-sudo install -Dm755 satty /usr/local/bin/satty
 # Iosevka
 mkdir -p ~/.local/share/fonts/iosevka
 cd ~/.local/share/fonts/iosevka
 curl -LO https://github.com/ryanoasis/nerd-fonts/releases/latest/download/IosevkaTerm.zip
 unzip IosevkaTerm.zip
 rm IosevkaTerm.zip
+# Rustup
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+source $HOME/.cargo/env
+export PATH="$HOME/.cargo/bin:$PATH"
+rustup update stable
+rustup default stable
 # External
 python3 -m pip install --user unp
+cargo install caligula
 
 # Copy config and dotfiles as the user
 mkdir -p ~/Downloads ~/Desktop ~/Public ~/Templates ~/Videos ~/Pictures/Screenshots/temp ~/.config
@@ -197,63 +200,63 @@ log_applied_rule = false
 cgroup_realtime_workaround = false
 EOF
 
-  # Firefox policy
-  mkdir -p /etc/firefox/policies
-  ln -sf "/home/$username/Documents/projects/default/dotfiles/policies.json" /etc/firefox/policies/policies.json
+# Firefox policy
+mkdir -p /etc/firefox/policies
+ln -sf "/home/$username/Documents/projects/default/dotfiles/policies.json" /etc/firefox/policies/policies.json
 
-  # tldr wiki setup
-  curl -L "https://raw.githubusercontent.com/filiparag/wikiman/master/Makefile" -o "wikiman-makefile"
-  make -f ./wikiman-makefile source-tldr
-  make -f ./wikiman-makefile source-install
-  make -f ./wikiman-makefile clean
+# tldr wiki setup
+curl -L "https://raw.githubusercontent.com/filiparag/wikiman/master/Makefile" -o "wikiman-makefile"
+make -f ./wikiman-makefile source-tldr
+make -f ./wikiman-makefile source-install
+make -f ./wikiman-makefile clean
 
-  # zram config
-  mkdir -p /etc/systemd/zram-generator.conf.d
-  printf "[zram0]\nzram-size=min(ram/2,4096)\ncompression-algorithm=zstd\nswap-priority=100\nfs-type=swap\n"| tee /etc/systemd/zram-generator.conf.d/00-zram.conf > /dev/null
+# zram config
+mkdir -p /etc/systemd/zram-generator.conf.d
+printf "[zram0]\nzram-size=min(ram/2,4096)\ncompression-algorithm=zstd\nswap-priority=100\nfs-type=swap\n" | tee /etc/systemd/zram-generator.conf.d/00-zram.conf >/dev/null
 
-  # services
-  # rfkill unblock bluetooth
-  # modprobe btusb || true
-  systemctl enable NetworkManager NetworkManager-dispatcher ly crond ananicy-cpp
-  if [[ "$hardware" == "hardware" ]]; then
-      systemctl enable fstrim.timer acpid libvirtd.socket cups ipp-usb docker.socket
-      if [[ "$extra" == "laptop" || "$extra" == "bluetooth" ]]; then
-          systemctl enable bluetooth
-      fi
-      if [[ "$extra" == "laptop" ]]; then
-          systemctl enable tlp
-      fi
+# services
+# rfkill unblock bluetooth
+# modprobe btusb || true
+systemctl enable NetworkManager NetworkManager-dispatcher ly crond ananicy-cpp
+if [[ "$hardware" == "hardware" ]]; then
+  systemctl enable fstrim.timer acpid libvirtd.socket cups ipp-usb docker.socket
+  if [[ "$extra" == "laptop" || "$extra" == "bluetooth" ]]; then
+    systemctl enable bluetooth
   fi
-  systemctl mask systemd-rfkill systemd-rfkill.socket
-  systemctl disable NetworkManager-wait-online.service systemd-networkd.service systemd-resolved getty@tty2
+  if [[ "$extra" == "laptop" ]]; then
+    systemctl enable tlp
+  fi
+fi
+systemctl mask systemd-rfkill systemd-rfkill.socket
+systemctl disable NetworkManager-wait-online.service systemd-networkd.service systemd-resolved getty@tty2
 
-  # prevent networkmanager from using systemd-resolved
-  # mkdir -p /etc/networkmanager/conf.d
-  # printf "[main]\nsystemd-resolved=false\n" | sudo tee /etc/networkmanager/conf.d/no-systemd-resolved.conf
+# prevent networkmanager from using systemd-resolved
+# mkdir -p /etc/networkmanager/conf.d
+# printf "[main]\nsystemd-resolved=false\n" | sudo tee /etc/networkmanager/conf.d/no-systemd-resolved.conf
 
-  # firewalld setup
-  # firewall-cmd --set-default-zone=public
-  firewall-cmd --permanent --remove-service=dhcpv6-client
-  firewall-cmd --permanent --add-service=http
-  firewall-cmd --permanent --add-service=https
-  # firewall-cmd --permanent --add-service=ssh
-  firewall-cmd --permanent --add-service=dns
-  firewall-cmd --permanent --add-service=dhcp
-  firewall-cmd --permanent --add-rich-rule='rule family="ipv4" source address="192.168.0.0/24" accept'
-  firewall-cmd --set-log-denied=all
-  # Create and assign a zone for virbr0
-  firewall-cmd --permanent --new-zone=libvirt
-  firewall-cmd --permanent --zone=libvirt --add-interface=virbr0
-  # Allow DHCP (ports 67, 68 UDP) and DNS (53 UDP)
-  # firewall-cmd --permanent --zone=libvirt --add-port=67/udp
-  # firewall-cmd --permanent --zone=libvirt --add-port=68/udp
-  # firewall-cmd --permanent --zone=libvirt --add-port=53/udp
-  # Enable masquerading for routed traffic (NAT)
-  firewall-cmd --permanent --add-masquerade
-  firewall-cmd --reload
-  systemctl enable firewalld
-  # echo 'net.ipv4.ip_forward = 1' | tee -a /etc/sysctl.d/99-firewalld.conf
-  # sysctl -p /etc/sysctl.d/99-firewalld.conf
+# firewalld setup
+# firewall-cmd --set-default-zone=public
+firewall-cmd --permanent --remove-service=dhcpv6-client
+firewall-cmd --permanent --add-service=http
+firewall-cmd --permanent --add-service=https
+# firewall-cmd --permanent --add-service=ssh
+firewall-cmd --permanent --add-service=dns
+firewall-cmd --permanent --add-service=dhcp
+firewall-cmd --permanent --add-rich-rule='rule family="ipv4" source address="192.168.0.0/24" accept'
+firewall-cmd --set-log-denied=all
+# Create and assign a zone for virbr0
+firewall-cmd --permanent --new-zone=libvirt
+firewall-cmd --permanent --zone=libvirt --add-interface=virbr0
+# Allow DHCP (ports 67, 68 UDP) and DNS (53 UDP)
+# firewall-cmd --permanent --zone=libvirt --add-port=67/udp
+# firewall-cmd --permanent --zone=libvirt --add-port=68/udp
+# firewall-cmd --permanent --zone=libvirt --add-port=53/udp
+# Enable masquerading for routed traffic (NAT)
+firewall-cmd --permanent --add-masquerade
+firewall-cmd --reload
+systemctl enable firewalld
+# echo 'net.ipv4.ip_forward = 1' | tee -a /etc/sysctl.d/99-firewalld.conf
+# sysctl -p /etc/sysctl.d/99-firewalld.conf
 EOF
 
 # Configure static IP, gateway, and custom DNS
