@@ -267,6 +267,33 @@ EOF
 # EOF
 # sudo systemctl restart NetworkManager
 
+# gsettings stuff
+export $(dbus-launch)
+gsettings set org.gnome.desktop.interface gtk-theme 'Gruvbox-Material-Dark'
+gsettings set org.gnome.desktop.interface icon-theme "Papirus-Dark"
+gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
+declare -A gsettings_keys=(
+  ["org.virt-manager.virt-manager.new-vm firmware"]="uefi"
+  ["org.virt-manager.virt-manager.new-vm cpu-default"]="host-passthrough"
+  ["org.virt-manager.virt-manager.new-vm graphics-type"]="spice"
+)
+
+for key in "${!gsettings_keys[@]}"; do
+  schema="${key% *}"
+  subkey="${key#* }"
+  value="${gsettings_keys[$key]}"
+
+  if gsettings describe "$schema" "$subkey" &>/dev/null; then
+    gsettings set "$schema" "$subkey" "$value"
+  fi
+done
+
+# Libvirt setup
+if pacman -Qq libvirt &>/dev/null; then
+  sudo virsh net-autostart default
+  sudo virsh net-start default
+fi
+
 # Flatpak setup
 flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 
