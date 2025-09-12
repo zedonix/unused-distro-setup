@@ -60,7 +60,7 @@ if [[ "$hardware" == "hardware" ]]; then
   esac
 fi
 
-sudo zypper ar -f https://download.opensuse.org/repositories/devel:languages:python/openSUSE_Tumbleweed/devel:languages:python.repo
+# sudo zypper ar -f https://download.opensuse.org/repositories/devel:languages:python/openSUSE_Tumbleweed/devel:languages:python.repo
 sudo zypper ar -f obs://home:iDesmI ananicy-cpp
 # sudo zypper ar -f http://codecs.opensuse.org/openh264/openSUSE_Tumbleweed repo-openh264
 sudo zypper ar -cfp 90 http://ftp.gwdg.de/pub/linux/misc/packman/suse/openSUSE_Tumbleweed/ packman
@@ -69,7 +69,8 @@ sudo zypper ref -f
 sudo zypper dup --from packman --allow-vendor-change
 
 xargs -a pkglist.txt sudo zypper install -y
-sudo npm install -g stylelint stylelint-config-standard
+corepack enable
+pnpm add -g stylelint stylelint-config-standard
 pipx ensurepath
 pipx install thefuck
 
