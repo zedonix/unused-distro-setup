@@ -70,7 +70,8 @@ sudo zypper dup --from packman --allow-vendor-change
 
 xargs -a pkglist.txt sudo zypper install -y
 sudo npm install -g stylelint stylelint-config-standard
-pip install thefuck
+pipx ensurepath
+pipx install thefuck
 
 read
 
