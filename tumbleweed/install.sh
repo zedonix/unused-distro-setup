@@ -71,8 +71,7 @@ sudo zypper dup --from packman --allow-vendor-change
 
 xargs -a pkglist.txt sudo zypper install -y
 mkdir -p ~/.local/share/pnpm
-export PATH="$HOME/.local/bin:$PATH"
-export PATH="$HOME/.local/share/pnpm:$PATH"
+export PATH="$HOME/.local/bin:$HOME/.local/share/pnpm:$PATH"
 corepack enable --install-directory ~/.local/bin
 corepack prepare pnpm@latest --activate
 pnpm add -g stylelint stylelint-config-standard
