@@ -70,13 +70,13 @@ sudo zypper ref -f
 sudo zypper dup --from packman --allow-vendor-change
 
 xargs -a pkglist.txt sudo zypper install -y
-pnpm setup
-source ~/.bashrc
-corepack enable --install-directory ~/.local/bin
+
+read
+
+sudo npm install -g corepack@latest
+corepack enable
 corepack prepare pnpm@latest --activate
-pnpm add -g stylelint stylelint-config-standard
 pipx ensurepath
-source ~/.bashrc
 pipx install thefuck
 
 read
