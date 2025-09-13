@@ -97,6 +97,18 @@ sudo env hardware="$hardware" extra="$extra" username="$username" bash <<'EOF'
   ln -sf /home/$username/Documents/projects/default/dotfiles/.config/starship.toml ~/.config
   ln -sf /home/$username/Documents/projects/default/dotfiles/.config/nvim/ ~/.config
 
+  # ly config
+  # -e 's/^bigclock *= *.*/bigclock = en/' \
+  mkdir -p /etc/ly
+  cp extra/config.ini /etc/ly/
+  cp extra/pam.d/ly /etc/pam.d/
+  cp extra/ly.service /etc/systemd/system/
+  sed -i \
+    -e 's/^allow_empty_password *= *.*/allow_empty_password = false/' \
+    -e 's/^clear_password *= *.*/clear_password = true/' \
+    -e 's/^clock *= *.*/clock = %a %d\/%m %H:%M/' \
+    /etc/ly/config.ini
+
   # Setup Gruvbox theme
   THEME_SRC="/home/$username/Documents/projects/default/GruvboxQT"
   THEME_DEST="/usr/share/Kvantum/Gruvbox"
