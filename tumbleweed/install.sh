@@ -71,8 +71,6 @@ sudo zypper dup --from packman --allow-vendor-change
 
 xargs -a pkglist.txt sudo zypper install -y
 
-read
-
 sudo npm install -g corepack@latest
 corepack enable
 corepack prepare pnpm@latest --activate
