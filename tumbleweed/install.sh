@@ -61,9 +61,9 @@ if [[ "$hardware" == "hardware" ]]; then
 fi
 
 # sudo zypper ar -f https://download.opensuse.org/repositories/devel:languages:python/openSUSE_Tumbleweed/devel:languages:python.repo
-sudo zypper ar -f obs://home:iDesmI ananicy-cpp
 # sudo zypper ar -f http://codecs.opensuse.org/openh264/openSUSE_Tumbleweed repo-openh264
-sudo zypper ar -cfp 90 http://ftp.gwdg.de/pub/linux/misc/packman/suse/openSUSE_Tumbleweed/ packman
+sudo zypper --gpg-auto-import-keys ar -cf obs://home:iDesmI ananicy-cpp
+sudo zypper --gpg-auto-import-keys ar -cfp 90 http://ftp.gwdg.de/pub/linux/misc/packman/suse/openSUSE_Tumbleweed/ packman
 sudo zypper rr repo-openh264
 sudo zypper ref -f
 sudo zypper dup --from packman --allow-vendor-change
