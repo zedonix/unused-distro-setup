@@ -97,7 +97,7 @@ cd "$(mktemp -d)"
 cd ..
 git clone https://codeberg.org/fairyglade/ly.git
 cd ly
-zig build
+zig build -Dinit_system=systemd
 sudo zig build installexe -Dinit_system=systemd
 # Iosevka
 mkdir -p ~/.local/share/fonts/iosevka
