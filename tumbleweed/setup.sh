@@ -104,11 +104,13 @@ sudo env hardware="$hardware" extra="$extra" username="$username" bash <<'EOF'
   # cp extra/config.ini /etc/ly/
   # cp extra/pam.d/ly /etc/pam.d/
   # cp extra/ly.service /etc/systemd/system/
-  sed -i \
-    -e 's/^allow_empty_password *= *.*/allow_empty_password = false/' \
-    -e 's/^clear_password *= *.*/clear_password = true/' \
-    -e 's/^clock *= *.*/clock = %a %d\/%m %H:%M/' \
-    /etc/ly/config.ini
+  # sed -i \
+  #   -e 's/^allow_empty_password *= *.*/allow_empty_password = false/' \
+  #   -e 's/^clear_password *= *.*/clear_password = true/' \
+  #   -e 's/^clock *= *.*/clock = %a %d\/%m %H:%M/' \
+  #   /etc/ly/config.ini
+  # Greetd
+  cp -f /home/$username/Documents/projects/default/dotfiles/config.toml /etc/greetd/
 
   # Setup Gruvbox theme
   THEME_SRC="/home/$username/Documents/projects/default/GruvboxQT"
@@ -163,7 +165,7 @@ printf "[zram0]\nzram-size=min(ram/2,4096)\ncompression-algorithm=zstd\nswap-pri
 # services
 # rfkill unblock bluetooth
 # modprobe btusb || true
-systemctl enable NetworkManager NetworkManager-dispatcher ly crond ananicy-cpp
+systemctl enable NetworkManager NetworkManager-dispatcher greetd crond ananicy-cpp
 if [[ "$hardware" == "hardware" ]]; then
   systemctl enable fstrim.timer acpid libvirtd.socket cups ipp-usb docker.socket
   if [[ "$extra" == "laptop" || "$extra" == "bluetooth" ]]; then
@@ -174,7 +176,7 @@ if [[ "$hardware" == "hardware" ]]; then
   fi
 fi
 systemctl mask systemd-rfkill systemd-rfkill.socket
-systemctl disable NetworkManager-wait-online.service systemd-networkd.service systemd-resolved getty@tty2
+systemctl disable NetworkManager-wait-online.service systemd-networkd.service systemd-resolved getty@tty1.service
 
 # prevent networkmanager from using systemd-resolved
 # mkdir -p /etc/networkmanager/conf.d
