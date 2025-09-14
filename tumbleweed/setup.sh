@@ -4,7 +4,7 @@ SCRIPT_DIR=$(dirname "$(realpath "$0")")
 cd "$SCRIPT_DIR"
 
 username=piyush
-export PATH="/sbin:/usr/sbin:$PATH"
+export PATH="/sbin:/usr/sbin:/usr/lib64:/usr/lib:$PATH"
 cd "$(mktemp -d)"
 # # wikiman
 # RPM_URL=$(curl -s https://api.github.com/repos/filiparag/wikiman/releases/latest |
