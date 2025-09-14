@@ -24,7 +24,7 @@ export PATH="/sbin:/usr/sbin:/usr/lib64:/usr/lib:$PATH"
 git clone https://codeberg.org/fairyglade/ly.git
 cd ly
 echo $PATH
-zig build -Dinit_system=systemd -Dtarget=x86_64-linux-gnu
+zig build -Dinit_system=systemd -Dtarget=x86_64-linux-gnu -Dsystem_lib_dirs="/usr/lib64,/usr/lib"
 sudo zig build installexe -Dinit_system=systemd
 # Iosevka
 mkdir -p ~/.local/share/fonts/iosevka
