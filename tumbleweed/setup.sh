@@ -39,7 +39,7 @@ export PATH="$HOME/.cargo/bin:$PATH"
 rustup update stable
 rustup default stable
 # External
-python3 -m pip install --user unp
+python3 -m pip install --user --break-system-packages unp
 cargo install caligula
 
 # Copy config and dotfiles as the user
