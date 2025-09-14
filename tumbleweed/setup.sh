@@ -4,8 +4,8 @@ SCRIPT_DIR=$(dirname "$(realpath "$0")")
 cd "$SCRIPT_DIR"
 
 username=piyush
-export PATH="/sbin:/usr/sbin:/usr/lib64:/usr/lib:$PATH"
 cd "$(mktemp -d)"
+export PATH="/sbin:/usr/sbin:/usr/lib64:/usr/lib:$PATH"
 # # wikiman
 # RPM_URL=$(curl -s https://api.github.com/repos/filiparag/wikiman/releases/latest |
 #   grep "browser_download_url" |
@@ -20,9 +20,10 @@ cd "$(mktemp -d)"
 # cargo build --release
 # sudo install -Dm755 target/release/wl-clip-persist /usr/local/bin/wl-clip-persist
 # ly
-cd ..
+# cd ..
 git clone https://codeberg.org/fairyglade/ly.git
 cd ly
+echo $PATH
 zig build -Dinit_system=systemd -Dtarget=x86_64-linux-gnu
 sudo zig build installexe -Dinit_system=systemd
 # Iosevka
@@ -99,10 +100,10 @@ sudo env hardware="$hardware" extra="$extra" username="$username" bash <<'EOF'
 
   # ly config
   # -e 's/^bigclock *= *.*/bigclock = en/' \
-  mkdir -p /etc/ly
-  cp extra/config.ini /etc/ly/
-  cp extra/pam.d/ly /etc/pam.d/
-  cp extra/ly.service /etc/systemd/system/
+  # mkdir -p /etc/ly
+  # cp extra/config.ini /etc/ly/
+  # cp extra/pam.d/ly /etc/pam.d/
+  # cp extra/ly.service /etc/systemd/system/
   sed -i \
     -e 's/^allow_empty_password *= *.*/allow_empty_password = false/' \
     -e 's/^clear_password *= *.*/clear_password = true/' \
