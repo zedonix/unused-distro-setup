@@ -24,8 +24,7 @@ cd "$(mktemp -d)"
 # cd ..
 git clone https://codeberg.org/fairyglade/ly.git
 cd ly
-echo $PATH
-zig build -Dinit_system=systemd -Dtarget=native -Denable_x11_support=false
+zig build -Dinit_system=systemd -Dtarget=x86_64-linux-gnu -Denable_x11_support=false 2>&1 | tee ~/ly-build.log
 sudo zig build installexe -Dinit_system=systemd
 # Iosevka
 mkdir -p ~/.local/share/fonts/iosevka
