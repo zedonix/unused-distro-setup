@@ -4,8 +4,9 @@ SCRIPT_DIR=$(dirname "$(realpath "$0")")
 cd "$SCRIPT_DIR"
 
 username=piyush
-cd "$(mktemp -d)"
 export PATH="/sbin:/usr/sbin:/usr/lib64:/usr/lib:$PATH"
+
+cd "$(mktemp -d)"
 # # wikiman
 # RPM_URL=$(curl -s https://api.github.com/repos/filiparag/wikiman/releases/latest |
 #   grep "browser_download_url" |
@@ -24,7 +25,8 @@ export PATH="/sbin:/usr/sbin:/usr/lib64:/usr/lib:$PATH"
 git clone https://codeberg.org/fairyglade/ly.git
 cd ly
 echo $PATH
-zig build -Dinit_system=systemd -Dtarget=native -Dverbose=true
+sed -i 's/\(\s*exe\.linkSystemLibrary(\"xcb\"\);\)/\/\/\1/' build.zig
+zig build -Dinit_system=systemd -Dtarget=native
 sudo zig build installexe -Dinit_system=systemd
 # Iosevka
 mkdir -p ~/.local/share/fonts/iosevka
