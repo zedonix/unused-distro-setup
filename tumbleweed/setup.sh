@@ -21,11 +21,11 @@ cd "$(mktemp -d)"
 # cargo build --release
 # sudo install -Dm755 target/release/wl-clip-persist /usr/local/bin/wl-clip-persist
 # ly
-# cd ..
-git clone https://codeberg.org/fairyglade/ly.git
-cd ly
-zig build -Dinit_system=systemd -Dtarget=x86_64-linux-gnu -Denable_x11_support=false 2>&1 | tee ~/ly-build.log
-sudo zig build installexe -Dinit_system=systemd
+cd ..
+# git clone https://codeberg.org/fairyglade/ly.git
+# cd ly
+# zig build -Dinit_system=systemd -Dtarget=x86_64-linux-gnu -Denable_x11_support=false 2>&1 | tee ~/ly-build.log
+# sudo zig build installexe -Dinit_system=systemd
 # Iosevka
 mkdir -p ~/.local/share/fonts/iosevka
 cd ~/.local/share/fonts/iosevka
