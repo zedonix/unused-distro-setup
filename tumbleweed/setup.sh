@@ -34,7 +34,7 @@ unzip IosevkaTerm.zip
 rm IosevkaTerm.zip
 # Rustup
 # curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-source $HOME/.cargo/env
+# source $HOME/.cargo/env
 export PATH="$HOME/.cargo/bin:$PATH"
 rustup update stable
 rustup default stable
