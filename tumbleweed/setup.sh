@@ -25,8 +25,7 @@ cd "$(mktemp -d)"
 git clone https://codeberg.org/fairyglade/ly.git
 cd ly
 echo $PATH
-sed -i 's/\(\s*exe\.linkSystemLibrary(\"xcb\"\);\)/\/\/\1/' build.zig
-zig build -Dinit_system=systemd -Dtarget=native
+zig build -Dinit_system=systemd -Dtarget=native -Denable_x11_support=false
 sudo zig build installexe -Dinit_system=systemd
 # Iosevka
 mkdir -p ~/.local/share/fonts/iosevka
