@@ -15,11 +15,6 @@ cd "$(mktemp -d)"
 # curl -LO "$RPM_URL"
 # RPM_FILE="${RPM_URL##*/}"
 # sudo zypper in "$RPM_FILE"
-# wl-clip-persist
-git clone https://github.com/Linus789/wl-clip-persist.git
-cd wl-clip-persist
-cargo build --release
-sudo install -Dm755 target/release/wl-clip-persist /usr/local/bin/wl-clip-persist
 # ly
 cd ..
 # git clone https://codeberg.org/fairyglade/ly.git
@@ -38,6 +33,11 @@ rm IosevkaTerm.zip
 export PATH="$HOME/.cargo/bin:$PATH"
 rustup update stable
 rustup default stable
+# wl-clip-persist
+git clone https://github.com/Linus789/wl-clip-persist.git
+cd wl-clip-persist
+cargo build --release
+sudo install -Dm755 target/release/wl-clip-persist /usr/local/bin/wl-clip-persist
 # External
 python3 -m pip install --user --break-system-packages unp
 cargo install caligula
