@@ -321,3 +321,5 @@ flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flat
   echo "*/5 * * * * battery-alert.sh"
   echo "@daily $(which trash-empty) 30"
 ) | crontab -
+
+echo "finally its done"
