@@ -202,7 +202,7 @@ sudo env hardware="$hardware" extra="$extra" username="$username" bash <<'EOF'
   cp -r ananicy-rules/00-default/* /etc/ananicy.d/zz-cachyos/
   cp -r ananicy-rules/00-types.types /etc/ananicy.d/zz-cachyos/
   cp -r ananicy-rules/00-cgroups.cgroups /etc/ananicy.d/zz-cachyos/
-  tee /etc/ananicy.d/ananicy.conf >/dev/null <<'EOF'
+  tee /etc/ananicy.d/ananicy.conf >/dev/null <<'ananicy'
 check_freq = 15
 cgroup_load = false
 type_load = true
@@ -216,7 +216,7 @@ apply_cgroup = true
 loglevel = info
 log_applied_rule = false
 cgroup_realtime_workaround = false
-EOF
+ananicy
 
 # Firefox policy
 mkdir -p /etc/firefox/policies
