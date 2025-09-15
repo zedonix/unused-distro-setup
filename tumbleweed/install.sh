@@ -236,6 +236,7 @@ printf "[zram0]\nzram-size=min(ram/2,4096)\ncompression-algorithm=zstd\nswap-pri
 # rfkill unblock bluetooth
 # modprobe btusb || true
 systemctl enable NetworkManager NetworkManager-dispatcher greetd crond ananicy-cpp
+systemctl set-default graphical.target
 if [[ "$hardware" == "hardware" ]]; then
   systemctl enable fstrim.timer acpid libvirtd.socket cups ipp-usb docker.socket
   if [[ "$extra" == "laptop" || "$extra" == "bluetooth" ]]; then
