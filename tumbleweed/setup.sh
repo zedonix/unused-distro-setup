@@ -8,18 +8,18 @@ export PATH="/sbin:/usr/sbin:/usr/lib64:/usr/lib:$PATH"
 
 cd "$(mktemp -d)"
 # # wikiman
-# RPM_URL=$(curl -s https://api.github.com/repos/filiparag/wikiman/releases/latest |
-#   grep "browser_download_url" |
-#   grep -E "wikiman.*\.rpm" |
-#   cut -d '"' -f 4)
-# curl -LO "$RPM_URL"
-# RPM_FILE="${RPM_URL##*/}"
-# sudo zypper in "$RPM_FILE"
+RPM_URL=$(curl -s https://api.github.com/repos/filiparag/wikiman/releases/latest |
+  grep "browser_download_url" |
+  grep -E "wikiman.*\.rpm" |
+  cut -d '"' -f 4)
+curl -LO "$RPM_URL"
+RPM_FILE="${RPM_URL##*/}"
+sudo zypper in "$RPM_FILE"
 # wl-clip-persist
-# git clone https://github.com/Linus789/wl-clip-persist.git
-# cd wl-clip-persist
-# cargo build --release
-# sudo install -Dm755 target/release/wl-clip-persist /usr/local/bin/wl-clip-persist
+git clone https://github.com/Linus789/wl-clip-persist.git
+cd wl-clip-persist
+cargo build --release
+sudo install -Dm755 target/release/wl-clip-persist /usr/local/bin/wl-clip-persist
 # ly
 cd ..
 # git clone https://codeberg.org/fairyglade/ly.git
