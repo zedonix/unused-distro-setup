@@ -58,7 +58,6 @@ git clone https://github.com/zedonix/GruvboxQT.git ~/Documents/projects/default/
 if [[ -d ~/Documents/projects/default/dotfiles ]]; then
   cp ~/Documents/projects/default/dotfiles/.config/sway/archLogo.png ~/Pictures/
   cp ~/Documents/projects/default/dotfiles/pics/* ~/Pictures/
-  cp -r ~/Documents/projects/default/dotfiles/.local/share/themes/Gruvbox-Dark ~/.local/share/themes/
   ln -sf ~/Documents/projects/default/dotfiles/.bashrc ~/.bashrc
   ln -sf ~/Documents/projects/default/dotfiles/.zshrc ~/.zshrc
 
