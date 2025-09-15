@@ -63,6 +63,7 @@ fi
 # sudo zypper ar -f https://download.opensuse.org/repositories/devel:languages:python/openSUSE_Tumbleweed/devel:languages:python.repo
 # sudo zypper ar -f http://codecs.opensuse.org/openh264/openSUSE_Tumbleweed repo-openh264
 sudo zypper --gpg-auto-import-keys ar -cf obs://home:iDesmI ananicy-cpp
+sudo zypper --gpg-auto-import-keys ar -cf http://download.opensuse.org/update/tumbleweed/ repo-update
 sudo zypper --gpg-auto-import-keys ar -cfp 90 http://ftp.gwdg.de/pub/linux/misc/packman/suse/openSUSE_Tumbleweed/ packman
 sudo zypper --gpg-auto-import-keys refresh
 sudo zypper rr repo-openh264
