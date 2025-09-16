@@ -133,6 +133,7 @@ mkdir -p /mnt/boot
 mount "$part1" /mnt/boot
 
 # Prepare chroot
+mkdir -p /mnt/{dev,dev/pts,proc,sys,run}
 for d in /dev /dev/pts /proc /sys /run; do
   mount --rbind "$d" "/mnt$d"
   mount --make-rslave "/mnt$d" || true
