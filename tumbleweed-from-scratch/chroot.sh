@@ -168,8 +168,13 @@ add_dracutmodules+=" crypt "
 EOF
 
 dracut -f
-GRUB_CMDLINE="rd.luks.name=${uuid}=cryptroot root=/dev/mapper/cryptroot rw quiet splash fsck.repair=yes zswap.enabled=0 rootfstype=ext4 ${pstate_param:-}"
-cat > /etc/default/grub <<EOF
+
+if [[ "$encryption" == "no" ]]; then
+  GRUB_CMDLINE="root=${part2} rw quiet splash fsck.repair=yes zswap.enabled=0 ${pstate_param:-}"
+else
+  GRUB_CMDLINE="rd.luks.name=${uuid}=cryptroot root=/dev/mapper/cryptroot rw quiet splash fsck.repair=yes zswap.enabled=0 ${pstate_param:-}"
+fi
+cat >/etc/default/grub <<EOF
 GRUB_DEFAULT=0
 GRUB_TIMEOUT=3
 GRUB_DISTRIBUTOR="openSUSE"

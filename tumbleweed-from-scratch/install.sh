@@ -22,9 +22,18 @@ timezone="Asia/Kolkata"
 username="piyush"
 
 # Installing necessary stuff
-zypper install parted
+zypper install -y parted
 
 # --- Prompt Section (collect all user input here) ---
+# Ecryption
+while true; do
+  read -p "Encryption (yes/no)? " recovery
+  case "$encryption" in
+  yes | no) break ;;
+  *) echo "Invalid input. Please enter 'yes' or 'no'." ;;
+  esac
+done
+
 # Disk Selection
 disks=($(lsblk -dno NAME,TYPE,RM | awk '$2 == "disk" && $3 == "0" {print $1}'))
 echo "Available disks:"
@@ -119,16 +128,28 @@ parted -s "$disk" set 1 esp on
 parted -s "$disk" mkpart primary ext4 2049MiB 100%
 
 # Luks encryption
-cryptsetup luksFormat "$part2"
-cryptsetup open "$part2" cryptroot
+if [[ "$encryption" == "yes" ]]; then
+  cryptsetup luksFormat "$part2"
+  cryptsetup open "$part2" cryptroot
+fi
 
 # Formatting
 mkfs.fat -F 32 -n BOOT "$part1"
-mkfs.ext4 -L ROOT /dev/mapper/cryptroot
-tune2fs -O fast_commit /dev/mapper/cryptroot
+
+if [[ "$encryption" == "no" ]]; then
+  mkfs.ext4 -L ROOT "$part2"
+  tune2fs -O fast_commit "$part2"
+else
+  mkfs.ext4 -L ROOT /dev/mapper/cryptroot
+  tune2fs -O fast_commit /dev/mapper/cryptroot
+fi
 
 # Mounting
-mount /dev/mapper/cryptroot /mnt
+if [[ "$encryption" == "no" ]]; then
+  mount "$part2" /mnt
+else
+  mount /dev/mapper/cryptroot /mnt
+fi
 mkdir -p /mnt/boot
 mount "$part1" /mnt/boot
 
@@ -354,6 +375,7 @@ extra=$extra
 timezone=$timezone
 username=$username
 part2=$part2
+encryption=$encryption
 EOF
 chmod 700 /mnt/root/install.conf
 
