@@ -347,7 +347,7 @@ zypper --root /mnt ref -f
 echo "download.always_in_advance = true" | sudo tee -a /mnt/etc/zypp/zypp.conf
 xargs -a pkglists.txt -r zypper --root /mnt install -y
 zypper --root /mnt in -y -t pattern enhanced_base
-zypper remove nano vim
+zypper remove nano
 
 cat >/mnt/etc/fstab <<EOF
 # <file system>	<mount point>	<type>	<options>	<dump>	<pass>
