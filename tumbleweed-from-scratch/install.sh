@@ -130,7 +130,9 @@ tune2fs -O fast_commit /dev/mapper/cryptroot
 # Mounting
 mount /dev/mapper/cryptroot /mnt
 mkdir -p /mnt/boot
+echo "here"
 mount "$part1" /mnt/boot
+echo "after"
 
 # Prepare chroot
 for d in /dev /dev/pts /proc /sys /run; do
