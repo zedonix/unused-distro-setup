@@ -273,6 +273,41 @@ if [[ -z "$firmware_string" ]]; then
 fi
 sed -i "s|linux-firmware|$firmware_string|g" pkgss.txt
 
+# Which type of packages?
+# Main package selection
+case "$hardware:$howMuch" in
+vm:min)
+  sed -n '1p' pkgss.txt | tr ' ' '\n' | grep -v '^$' >pkglists.txt
+  ;;
+vm:max)
+  sed -n '1p;3p' pkgss.txt | tr ' ' '\n' | grep -v '^$' >pkglists.txt
+  ;;
+hardware:min)
+  sed -n '1,2p' pkgss.txt | head -n 2 | tr ' ' '\n' | grep -v '^$' >pkglists.txt
+  ;;
+hardware:max)
+  # For hardware:max, we will add lines 5 and/or 6 later based on $extra
+  sed -n '1,4p' pkgss.txt | tr ' ' '\n' | grep -v '^$' >pkglists.txt
+  ;;
+esac
+
+# For hardware:max, add lines 5 and/or 6 based on $extra
+if [[ "$hardware" == "hardware" && "$howMuch" == "max" ]]; then
+  case "$extra" in
+  laptop)
+    # Add both line 5 and 6
+    sed -n '5,6p' pkgss.txt | tr ' ' '\n' | grep -v '^$' >>pkglists.txt
+    ;;
+  bluetooth)
+    # Add only line 5
+    sed -n '5p' pkgss.txt | tr ' ' '\n' | grep -v '^$' >>pkglists.txt
+    ;;
+  none)
+    # Do not add line 5 or 6
+    ;;
+  esac
+fi
+
 # tumbleweed repo
 zypper --root /mnt --gpg-auto-import-keys ar -cf https://download.opensuse.org/tumbleweed/repo/oss/ repo-oss
 zypper --root /mnt --gpg-auto-import-keys ar -cf https://download.opensuse.org/tumbleweed/repo/non-oss/ repo-non-oss
@@ -283,9 +318,13 @@ zypper --root /mnt ref -f
 
 # Pattern installation
 zypper --root /mnt in -t pattern minimal_base kernel-default dracut cryptsetup zypper shadow util-linux
-# Packages installation
-zypper --root /mnt in NetworkManager vim sudo
 xargs -a pkglist.txt zypper --root /mnt install -y
+
+cat > /mnt/etc/fstab <<EOF
+# <file system>	<mount point>	<type>	<options>	<dump>	<pass>
+UUID=$ESP_UUID	/boot	vfat	defaults	0	2
+UUID=$ROOT_UUID	/	ext4	defaults	0	1
+EOF
 
 # Exporting variables for chroot
 chroot /mnt /bin/bash -s <<EOF
