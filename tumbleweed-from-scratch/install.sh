@@ -345,8 +345,8 @@ zypper --root /mnt ref -f
 
 # Pattern installation
 echo "download.always_in_advance = true" | sudo tee -a /mnt/etc/zypp/zypp.conf
-xargs -a pkglists.txt -r zypper --root /mnt install -y
-zypper --root /mnt in -y -t pattern enhanced_base
+xargs -a pkglists.txt -r zypper --root /mnt install -y --no-recommends
+zypper --root /mnt in -y --no-recommends -t pattern enhanced_base
 zypper remove nano
 
 cat >/mnt/etc/fstab <<EOF
