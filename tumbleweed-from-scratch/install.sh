@@ -133,14 +133,17 @@ mkdir -p /mnt/boot
 mount "$part1" /mnt/boot
 
 # Prepare chroot
-mkdir -p /mnt/{dev,dev/pts,proc,sys,run}
-for d in /dev /dev/pts /proc /sys /run; do
-  mount --rbind "$d" "/mnt$d"
-  mount --make-rslave "/mnt$d" || true
-done
+mkdir -p /mnt/{proc,sys,dev,run}
+mount --types proc /proc /mnt/proc
+mount --rbind /sys /mnt/sys
+mount --make-rslave /mnt/sys
+mount --rbind /dev /mnt/dev
+mount --make-rslave /mnt/dev
+mount --bind /run /mnt/run
+mount --make-slave /mnt/run
 
 # copy resolv.conf so zypper inside the new root can resolve DNS
-cp /etc/resolv.conf /mnt/etc/resolv.conf
+# cp /etc/resolv.conf /mnt/etc/resolv.conf
 
 # Detect CPU vendor and set microcode package
 cpu_vendor=$(lscpu | awk -F: '/Vendor ID:/ {print $2}' | xargs)
@@ -160,7 +163,7 @@ declare -A driver_to_pkg=(
   ["amdgpu"]="kernel-firmware-amdgpu"
   ["radeon"]="kernel-firmware-radeon"
   ["i915"]="kernel-firmware-i915"
-  ["nouveau"]="kernel-firmware-nvidia"   # nouveau uses nvidia firmware files package on openSUSE
+  ["nouveau"]="kernel-firmware-nvidia" # nouveau uses nvidia firmware files package on openSUSE
   ["nvidia"]="kernel-firmware-nvidia"
 
   # Intel wireless / wifi
@@ -320,7 +323,7 @@ zypper --root /mnt ref -f
 zypper --root /mnt in -t pattern minimal_base kernel-default dracut cryptsetup zypper shadow util-linux
 xargs -a pkglist.txt zypper --root /mnt install -y
 
-cat > /mnt/etc/fstab <<EOF
+cat >/mnt/etc/fstab <<EOF
 # <file system>	<mount point>	<type>	<options>	<dump>	<pass>
 UUID=$ESP_UUID	/boot	vfat	defaults	0	2
 UUID=$ROOT_UUID	/	ext4	defaults	0	1
