@@ -79,16 +79,7 @@ pipx ensurepath
 pipx install thefuck
 
 cd "$(mktemp -d)"
-# # wikiman
-# RPM_URL=$(curl -s https://api.github.com/repos/filiparag/wikiman/releases/latest |
-#   grep "browser_download_url" |
-#   grep -E "wikiman.*\.rpm" |
-#   cut -d '"' -f 4)
-# curl -LO "$RPM_URL"
-# RPM_FILE="${RPM_URL##*/}"
-# sudo zypper in "$RPM_FILE"
 # ly
-cd ..
 # git clone https://codeberg.org/fairyglade/ly.git
 # cd ly
 # zig build -Dinit_system=systemd -Dtarget=x86_64-linux-gnu -Denable_x11_support=false 2>&1 | tee ~/ly-build.log
@@ -248,7 +239,7 @@ if [[ "$hardware" == "hardware" ]]; then
   fi
 fi
 systemctl mask systemd-rfkill systemd-rfkill.socket
-systemctl disable NetworkManager-wait-online.service systemd-networkd.service systemd-resolved getty@tty1.service
+systemctl disable NetworkManager-wait-online.service systemd-networkd.service systemd-resolved
 
 # prevent networkmanager from using systemd-resolved
 # mkdir -p /etc/networkmanager/conf.d
