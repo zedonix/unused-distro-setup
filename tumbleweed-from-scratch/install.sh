@@ -320,8 +320,9 @@ zypper --root /mnt --gpg-auto-import-keys ar -cf obs://home:iDesmI ananicy-cpp
 zypper --root /mnt ref -f
 
 # Pattern installation
-zypper --root /mnt in -t pattern minimal_base kernel-default dracut cryptsetup zypper shadow util-linux
+zypper --root /mnt in -t pattern kernel-default enhanced_base cryptsetup
 xargs -a pkglist.txt zypper --root /mnt install -y
+zypper remove nano vim
 
 cat >/mnt/etc/fstab <<EOF
 # <file system>	<mount point>	<type>	<options>	<dump>	<pass>
