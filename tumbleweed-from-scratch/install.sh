@@ -351,7 +351,6 @@ hostname=$hostname
 hardware=$hardware
 howMuch=$howMuch
 extra=$extra
-microcode_pkg=$microcode_pkg
 timezone=$timezone
 username=$username
 part2=$part2

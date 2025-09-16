@@ -160,12 +160,6 @@ EOF
 fi
 
 # Boot Manager setup
-if [[ "$microcode_pkg" == "ucode-intel" ]]; then
-  microcode_img="initrd /intel-ucode.img"
-elif [[ "$microcode_pkg" == "ucode-amd" ]]; then
-  microcode_img="initrd /amd-ucode.img"
-fi
-
 cat >/etc/dracut.conf.d/crypt.conf <<'EOF'
 add_dracutmodules+=" crypt "
 # optionally force use_fstab/use_crypttab if needed:
@@ -174,30 +168,16 @@ add_dracutmodules+=" crypt "
 EOF
 
 dracut -f
-bootctl --path=/boot install
-
-cat >/boot/loader/loader.conf <<EOF
-default tumbleweed
-timeout 3
-editor no
+GRUB_CMDLINE="rd.luks.name=${uuid}=cryptroot root=/dev/mapper/cryptroot rw quiet splash fsck.repair=yes zswap.enabled=0 rootfstype=ext4 ${pstate_param:-}"
+cat > /etc/default/grub <<EOF
+GRUB_DEFAULT=0
+GRUB_TIMEOUT=3
+GRUB_DISTRIBUTOR="openSUSE"
+GRUB_CMDLINE_LINUX="${GRUB_CMDLINE}"
+GRUB_DISABLE_OS_PROBER=false
 EOF
-
-# common options base
-# opts_base="rd.luks.name=$uuid=cryptroot root=/dev/mapper/cryptroot rw quiet splash fsck.repair=yes zswap.enabled=0 rootfstype=ext4"
-# if [[ -n "$pstate_param" ]]; then
-#   opts="$opts_base $pstate_param"
-# else
-#   opts="$opts_base"
-# fi
-
-cat >/boot/loader/entries/tumbleweed.conf <<ENTRY
-title   Tumbleweed
-version rolling
-linux   /vmlinuz-%v
-$microcode_img
-initrd  /initrd-%v.img
-options rd.luks.name=$uuid=cryptroot root=/dev/mapper/cryptroot rw quiet splash fsck.repair=yes zswap.enabled=0 rootfstype=ext4 $pstate_param
-ENTRY
+grub2-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
+grub2-mkconfig -o /boot/grub2/grub.cfg
 
 su - "$username" -c '
   mkdir -p ~/Documents/projects/default
