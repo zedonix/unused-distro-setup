@@ -317,11 +317,12 @@ zypper --root /mnt --gpg-auto-import-keys ar -cf https://download.opensuse.org/t
 zypper --root /mnt --gpg-auto-import-keys ar -cf https://download.opensuse.org/update/tumbleweed/ repo-update
 zypper --root /mnt --gpg-auto-import-keys ar -cfp 90 http://ftp.gwdg.de/pub/linux/misc/packman/suse/openSUSE_Tumbleweed/ packman
 zypper --root /mnt --gpg-auto-import-keys ar -cf obs://home:iDesmI/openSUSE_Tumbleweed ananicy-cpp
+# zypper dup --from packman --allow-vendor-change
 
 zypper --root /mnt ref -f
 
 # Pattern installation
-zypper --root /mnt in -t pattern kernel-default enhanced_base cryptsetup
+zypper --root /mnt in -t pattern enhanced_base
 xargs -a pkglist.txt zypper --root /mnt install -y
 zypper remove nano vim
 
