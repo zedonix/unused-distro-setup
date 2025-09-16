@@ -316,7 +316,8 @@ zypper --root /mnt --gpg-auto-import-keys ar -cf https://download.opensuse.org/t
 zypper --root /mnt --gpg-auto-import-keys ar -cf https://download.opensuse.org/tumbleweed/repo/non-oss/ repo-non-oss
 zypper --root /mnt --gpg-auto-import-keys ar -cf https://download.opensuse.org/update/tumbleweed/ repo-update
 zypper --root /mnt --gpg-auto-import-keys ar -cfp 90 http://ftp.gwdg.de/pub/linux/misc/packman/suse/openSUSE_Tumbleweed/ packman
-zypper --root /mnt --gpg-auto-import-keys ar -cf obs://home:iDesmI ananicy-cpp
+zypper --root /mnt --gpg-auto-import-keys ar -cf obs://home:iDesmI/openSUSE_Tumbleweed ananicy-cpp
+
 zypper --root /mnt ref -f
 
 # Pattern installation
