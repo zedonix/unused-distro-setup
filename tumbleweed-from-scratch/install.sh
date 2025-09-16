@@ -312,9 +312,7 @@ if [[ "$hardware" == "hardware" && "$howMuch" == "max" ]]; then
 fi
 
 # tumbleweed repo
-rpm --root /mnt --import https://download.opensuse.org/repositories/openSUSE:/Factory/standard/repomd.xml.key
-rpm --root /mnt --import http://ftp.gwdg.de/pub/linux/misc/packman/suse/openSUSE_Tumbleweed/repodata/repomd.xml.key
-rpm --root /mnt --import https://build.opensuse.org/projects/home:iDesmI/public_key
+sudo zypper --gpg-auto-import-keys refresh
 zypper --root /mnt --gpg-auto-import-keys ar -cf https://download.opensuse.org/tumbleweed/repo/oss/ repo-oss
 zypper --root /mnt --gpg-auto-import-keys ar -cf https://download.opensuse.org/tumbleweed/repo/non-oss/ repo-non-oss
 zypper --root /mnt --gpg-auto-import-keys ar -cf https://download.opensuse.org/update/tumbleweed/ repo-update
