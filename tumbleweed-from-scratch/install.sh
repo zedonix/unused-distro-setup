@@ -22,12 +22,12 @@ timezone="Asia/Kolkata"
 username="piyush"
 
 # Installing necessary stuff
-zypper install -y parted
+# zypper install -y parted
 
 # --- Prompt Section (collect all user input here) ---
 # Ecryption
 while true; do
-  read -p "Encryption (yes/no)? " recovery
+  read -p "Encryption (yes/no)? " encryption
   case "$encryption" in
   yes | no) break ;;
   *) echo "Invalid input. Please enter 'yes' or 'no'." ;;
