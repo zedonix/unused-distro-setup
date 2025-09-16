@@ -50,10 +50,6 @@ fi
 part1="${part_prefix}1"
 part2="${part_prefix}2"
 
-# tell kernel about partitions
-partprobe "$disk"
-udevadm settle
-
 # Which type of install?
 #
 # First choice: vm or hardware
