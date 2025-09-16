@@ -21,6 +21,9 @@ cd "$SCRIPT_DIR"
 timezone="Asia/Kolkata"
 username="piyush"
 
+# Installing necessary stuff
+zypper install parted
+
 # --- Prompt Section (collect all user input here) ---
 # Disk Selection
 disks=($(lsblk -dno NAME,TYPE,RM | awk '$2 == "disk" && $3 == "0" {print $1}'))
