@@ -159,6 +159,12 @@ EOF
   fi
 fi
 
+# Selinux
+cat >/etc/selinux/config <<'EOF'
+SELINUX=permissive
+SELINUXTYPE=targeted
+EOF
+
 # Boot Manager setup
 cat >/etc/dracut.conf.d/crypt.conf <<'EOF'
 add_dracutmodules+=" crypt "
@@ -174,6 +180,10 @@ if [[ "$encryption" == "no" ]]; then
 else
   GRUB_CMDLINE="rd.luks.name=${uuid}=cryptroot root=/dev/mapper/cryptroot rw quiet splash fsck.repair=yes zswap.enabled=0 ${pstate_param:-}"
 fi
+if [[ "$howMuch" == "max" ]]; then
+  sed -i 's/\(GRUB_CMDLINE_LINUX_DEFAULT="[^"]*\)/\1 security=selinux selinux=1 enforcing=0/' /mnt/etc/default/grub
+fi
+
 cat >/etc/default/grub <<EOF
 GRUB_DEFAULT=0
 GRUB_TIMEOUT=3

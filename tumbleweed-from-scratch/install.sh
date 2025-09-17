@@ -344,11 +344,9 @@ fi
 zypper --root /mnt --gpg-auto-import-keys ar -cf https://download.opensuse.org/tumbleweed/repo/oss/ repo-oss
 zypper --root /mnt ref -f
 
-# Pattern installation
-echo "download.always_in_advance = true" | sudo tee -a /mnt/etc/zypp/zypp.conf
-xargs -a pkglists.txt -r zypper --root /mnt install -y --no-recommends
-zypper --root /mnt in -y -t pattern enhanced_base
-zypper remove nano
+# Packages installation
+echo "solver.onlyRequires = true" | sudo tee -a /mnt/etc/zypp/zypp.conf
+xargs -a pkglists.txt -r zypper --root /mnt install -y
 
 ESP_UUID=$(blkid -s UUID -o value "$part1")
 ROOT_UUID=$(blkid -s UUID -o value "$part2")
@@ -369,9 +367,9 @@ ls -l /etc/passwd /etc/group /etc/shadow
 read
 echo "root:$root_password" | chpasswd
 if [[ "$howMuch" == "max" && "$hardware" == "hardware" ]]; then
-  useradd -m -G wheel,storage,video,audio,lp,scanner,sys,kvm,libvirt,docker -s /bin/bash "$username"
+  useradd -m -G users,wheel,storage,video,audio,lp,scanner,sys,kvm,libvirt,docker -s /bin/bash "$username"
 else
-  useradd -m -G wheel,storage,video,audio,lp,sys -s /bin/bash "$username"
+  useradd -m -G users,wheel,storage,video,audio,lp,sys -s /bin/bash "$username"
 fi
 echo "$username:$user_password" | chpasswd
 EOF
