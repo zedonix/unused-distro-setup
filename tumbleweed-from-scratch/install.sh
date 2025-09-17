@@ -333,11 +333,6 @@ if [[ "$hardware" == "hardware" && "$howMuch" == "max" ]]; then
 fi
 
 # tumbleweed repo
-zypper --root /mnt lr -u | less
-read
-zypper --root /mnt --gpg-auto-import-keys refresh
-zypper --root /mnt lr -d | less
-read
 if [[ "$howMuch" == "max" ]]; then
   zypper --root /mnt --gpg-auto-import-keys ar -cf https://download.opensuse.org/tumbleweed/repo/non-oss/ repo-non-oss
   zypper --root /mnt --gpg-auto-import-keys ar -cf https://download.opensuse.org/update/tumbleweed/ repo-update
