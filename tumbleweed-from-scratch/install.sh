@@ -365,8 +365,11 @@ getent group wheel || grep '^wheel:' /etc/group || true
 ls -l /etc/passwd /etc/group /etc/shadow
 read
 echo "root:$root_password" | chpasswd
+cut -d: -f1 /etc/group
+groupadd wheel
+read
 if [[ "$howMuch" == "max" && "$hardware" == "hardware" ]]; then
-  useradd -m -G users,wheel,storage,video,audio,lp,scanner,sys,kvm,libvirt,docker -s /bin/bash "$username"
+  useradd -m -G users,wheel,video,audio,lp,scanner,kvm,libvirt,docker -s /bin/bash "$username"
 else
   useradd -m -G users,wheel,storage,video,audio,lp,sys -s /bin/bash "$username"
 fi
