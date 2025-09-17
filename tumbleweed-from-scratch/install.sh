@@ -334,7 +334,7 @@ fi
 
 # tumbleweed repo
 zypper --gpg-auto-import-keys refresh
-if [[ "$howMuch" == "min" ]]; then
+if [[ "$howMuch" == "max" ]]; then
   zypper --root /mnt --gpg-auto-import-keys ar -cf https://download.opensuse.org/tumbleweed/repo/non-oss/ repo-non-oss
   zypper --root /mnt --gpg-auto-import-keys ar -cf https://download.opensuse.org/update/tumbleweed/ repo-update
   zypper --root /mnt --gpg-auto-import-keys ar -cfp 90 http://ftp.gwdg.de/pub/linux/misc/packman/suse/openSUSE_Tumbleweed/ packman
