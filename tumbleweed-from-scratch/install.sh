@@ -359,7 +359,13 @@ EOF
 
 # Exporting variables for chroot
 chroot /mnt /bin/bash -s <<EOF
-# source /etc/profile
+getent group wheel || grep '^wheel:' /etc/group || true
+ls -l /etc/passwd /etc/group /etc/shadow
+read
+source /etc/profile
+getent group wheel || grep '^wheel:' /etc/group || true
+ls -l /etc/passwd /etc/group /etc/shadow
+read
 echo "root:$root_password" | chpasswd
 if [[ "$howMuch" == "max" && "$hardware" == "hardware" ]]; then
   useradd -m -G wheel,storage,video,audio,lp,scanner,sys,kvm,libvirt,docker -s /bin/bash "$username"
