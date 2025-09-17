@@ -349,6 +349,8 @@ xargs -a pkglists.txt -r zypper --root /mnt install -y --no-recommends
 zypper --root /mnt in -y --no-recommends -t pattern enhanced_base
 zypper remove nano
 
+ESP_UUID=$(blkid -s UUID -o value "$part1")
+ROOT_UUID=$(blkid -s UUID -o value "$part2")
 cat >/mnt/etc/fstab <<EOF
 # <file system>	<mount point>	<type>	<options>	<dump>	<pass>
 UUID=$ESP_UUID	/boot	vfat	defaults	0	2
