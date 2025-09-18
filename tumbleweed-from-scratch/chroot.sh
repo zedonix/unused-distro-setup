@@ -3,7 +3,6 @@ set -euo pipefail
 
 # Source variables and shit
 source /root/install.conf
-cp -L /etc/resolv.conf /mnt/etc/resolv.conf
 systemctl start NetworkManager
 
 # --- Set hostname ---

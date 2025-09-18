@@ -378,6 +378,7 @@ EOF
 chmod 700 /mnt/root/install.conf
 
 # Run chroot.sh
+cp -L /etc/resolv.conf /mnt/etc/resolv.conf
 cp chroot.sh /mnt/root/chroot.sh
 chmod 700 /mnt/root/chroot.sh
 chroot /mnt /bin/bash -s <<EOF
