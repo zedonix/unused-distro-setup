@@ -14,8 +14,7 @@ echo "127.0.1.1  $hostname.localdomain  $hostname" >>/etc/hosts
 # Local Setup
 ln -sf "/usr/share/zoneinfo/$timezone" /etc/localtime
 hwclock --systohc
-sed -i 's/^#en_US.UTF-8/en_US.UTF-8/g' /etc/locale.gen
-locale-gen
+localectl set-locale LANG=en_US.UTF-8
 echo "LANG=en_US.UTF-8" >/etc/locale.conf
 
 # Sudo Configuration
