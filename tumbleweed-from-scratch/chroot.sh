@@ -224,6 +224,7 @@ if [[ "$howMuch" == "max" ]]; then
   corepack prepare pnpm@latest --activate
   pipx ensurepath
   pipx install thefuck
+  pipx runpip thefuck install setuptools
   pipx install unp
   cargo install caligula
   '
