@@ -353,8 +353,8 @@ if [[ "$howMuch" == "max" ]]; then
   fi
 fi
 systemctl enable NetworkManager NetworkManager-dispatcher
+systemctl disable NetworkManager-wait-online.service
 systemctl mask systemd-rfkill systemd-rfkill.socket
-systemctl disable NetworkManager-wait-online.service systemd-networkd.service systemd-resolved
 
 # prevent networkmanager from using systemd-resolved
 # mkdir -p /etc/networkmanager/conf.d
