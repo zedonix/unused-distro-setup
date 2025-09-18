@@ -99,19 +99,19 @@ while true; do
   break
 done
 
-min=9
+min=8
 # Root Password
 while true; do
   read -s -p "Root password (min $min chars): " root_password
   echo
-  read -s -p "Confirm root password: " root_password2
-  echo
-  [[ "$root_password" != "$root_password2" ]] && echo "Passwords do not match." && continue
-  [[ -z "$root_password" ]] && echo "Password cannot be empty." && continue
   if ((${#root_password} < min)); then
     echo "Password must be at least $min characters."
     continue
   fi
+  read -s -p "Confirm root password: " root_password2
+  echo
+  [[ "$root_password" != "$root_password2" ]] && echo "Passwords do not match." && continue
+  [[ -z "$root_password" ]] && echo "Password cannot be empty." && continue
   break
 done
 
@@ -119,14 +119,14 @@ done
 while true; do
   read -s -p "User password (min $min chars): " user_password
   echo
-  read -s -p "Confirm user password: " user_password2
-  echo
-  [[ "$user_password" != "$user_password2" ]] && echo "Passwords do not match." && continue
-  [[ -z "$user_password" ]] && echo "Password cannot be empty." && continue
   if ((${#user_password} < min)); then
     echo "Password must be at least $min characters."
     continue
   fi
+  read -s -p "Confirm user password: " user_password2
+  echo
+  [[ "$user_password" != "$user_password2" ]] && echo "Passwords do not match." && continue
+  [[ -z "$user_password" ]] && echo "Password cannot be empty." && continue
   break
 done
 
