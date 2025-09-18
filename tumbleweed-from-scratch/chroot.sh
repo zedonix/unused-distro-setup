@@ -341,6 +341,7 @@ mkdir -p /etc/systemd/zram-generator.conf.d
 # modprobe btusb || true
 if [[ "$howMuch" == "max" ]]; then
   systemctl set-default graphical.target
+  systemctl enable greetd crond ananicy-cpp
   if [[ "$hardware" == "hardware" ]]; then
     systemctl enable fstrim.timer acpid libvirtd.socket cups ipp-usb docker.socket
     if [[ "$extra" == "laptop" || "$extra" == "bluetooth" ]]; then
