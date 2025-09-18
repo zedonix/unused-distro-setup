@@ -315,10 +315,8 @@ touch ~/.local/state/bash/history ~/.local/state/zsh/history ~/Documents/persona
     for link in ~/Documents/projects/default/scripts/bin/*; do
       ln -sf "$link" ~/.local/bin/
     done
-  fi
-
-  # Clone tpm
   git clone https://github.com/tmux-plugins/tpm ~/.config/tmux/plugins/tpm
+  fi
   '
 # Delete variables
 shred -u /root/install.conf
