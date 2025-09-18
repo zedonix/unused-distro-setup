@@ -21,9 +21,6 @@ cd "$SCRIPT_DIR"
 timezone="Asia/Kolkata"
 username="piyush"
 
-# Installing necessary stuff
-# zypper install -y parted
-
 # --- Prompt Section (collect all user input here) ---
 # Ecryption
 while true; do
@@ -344,8 +341,8 @@ zypper --root /mnt --gpg-auto-import-keys ar -cf https://download.opensuse.org/t
 zypper --root /mnt ref -f
 
 # Packages installation
-echo "solver.onlyRequires = true" | sudo tee -a /mnt/etc/zypp/zypp.conf
 xargs -a pkglists.txt -r zypper --root /mnt install -y
+echo "solver.onlyRequires = true" | sudo tee -a /mnt/etc/zypp/zypp.conf
 
 ESP_UUID=$(blkid -s UUID -o value "$part1")
 ROOT_UUID=$(blkid -s UUID -o value "$part2")
