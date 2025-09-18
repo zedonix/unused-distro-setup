@@ -2,7 +2,9 @@
 set -euo pipefail
 
 # Source variables and shit
+source /etc/profile
 source /root/install.conf
+systemctl start NetworkManager
 
 # --- Set hostname ---
 echo "$hostname" >/etc/hostname
@@ -193,40 +195,17 @@ EOF
 grub2-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
 grub2-mkconfig -o /boot/grub2/grub.cfg
 
-su - "$username" -c '
-  mkdir -p ~/Documents/projects/default
-  # Clone scripts
-  git clone https://github.com/zedonix/scripts.git ~/Documents/projects/default/scripts
-  git clone https://github.com/zedonix/dotfiles.git ~/Documents/projects/default/dotfiles
-  git clone https://github.com/zedonix/archsetup.git ~/Documents/projects/default/archsetup
-  git clone https://github.com/zedonix/notes.git ~/Documents/projects/default/notes
-  git clone https://github.com/zedonix/GruvboxGtk.git ~/Documents/projects/default/GruvboxGtk
-  git clone https://github.com/zedonix/GruvboxQT.git ~/Documents/projects/default/GruvboxQT
-
-  mkdir -p ~/Downloads ~/Desktop ~/Public ~/Templates ~/Videos ~/Pictures/Screenshots/temp ~/.config
-  mkdir -p ~/Documents/projects/work ~/Documents/projects/sandbox ~/Documents/personal/wiki
-  mkdir -p ~/.local/bin ~/.cache/cargo-target ~/.local/state/bash ~/.local/state/zsh ~/.local/share/wineprefixes
-  touch ~/.local/state/bash/history ~/.local/state/zsh/history ~/Documents/personal/wiki/index.txt
-
-  # Copy and link files (only if dotfiles exists)
-  if [[ -d ~/Documents/projects/default/dotfiles ]]; then
-    cp ~/Documents/projects/default/dotfiles/pics/* ~/Pictures/
-    ln -sf ~/Documents/projects/default/dotfiles/.bashrc ~/.bashrc
-    ln -sf ~/Documents/projects/default/dotfiles/.zshrc ~/.zshrc
-
-    for link in ~/Documents/projects/default/dotfiles/.config/*; do
-      ln -sf "$link" ~/.config/
-    done
-    for link in ~/Documents/projects/default/dotfiles/.copy/*; do
-      cp -r "$link" ~/.config/
-    done
-    for link in ~/Documents/projects/default/scripts/bin/*; do
-      ln -sf "$link" ~/.local/bin/
-    done
-  fi
-
-  # Clone tpm
-  git clone https://github.com/tmux-plugins/tpm ~/.config/tmux/plugins/tpm
+# Copy config and dotfiles as the user
+if [[ "$howMuch" == "max" ]]; then
+  su - "$username" -c '
+    mkdir -p ~/Documents/projects/default
+    # Clone scripts
+    git clone https://github.com/zedonix/scripts.git ~/Documents/projects/default/scripts
+    git clone https://github.com/zedonix/dotfiles.git ~/Documents/projects/default/dotfiles
+    git clone https://github.com/zedonix/archsetup.git ~/Documents/projects/default/archsetup
+    git clone https://github.com/zedonix/notes.git ~/Documents/projects/default/notes
+    git clone https://github.com/zedonix/GruvboxGtk.git ~/Documents/projects/default/GruvboxGtk
+    git clone https://github.com/zedonix/GruvboxQT.git ~/Documents/projects/default/GruvboxQT
 
   # External installation
   # Iosevka
@@ -255,48 +234,48 @@ su - "$username" -c '
   pipx install thefuck
   pipx install unp
   cargo install caligula
-'
-# Root .config
-mkdir -p ~/.config ~/.local/state/bash ~/.local/state/zsh
-echo '[[ -f ~/.bashrc ]] && . ~/.bashrc' >~/.bash_profile
-touch ~/.local/state/zsh/history ~/.local/state/bash/history
-ln -sf /home/$username/Documents/projects/default/dotfiles/.bashrc ~/.bashrc
-ln -sf /home/$username/Documents/projects/default/dotfiles/.zshrc ~/.zshrc
-ln -sf /home/$username/Documents/projects/default/dotfiles/.config/starship.toml ~/.config
-ln -sf /home/$username/Documents/projects/default/dotfiles/.config/nvim/ ~/.config
+  '
+  # Root .config
+  mkdir -p ~/.config ~/.local/state/bash ~/.local/state/zsh
+  echo '[[ -f ~/.bashrc ]] && . ~/.bashrc' >~/.bash_profile
+  touch ~/.local/state/zsh/history ~/.local/state/bash/history
+  ln -sf /home/$username/Documents/projects/default/dotfiles/.bashrc ~/.bashrc
+  ln -sf /home/$username/Documents/projects/default/dotfiles/.zshrc ~/.zshrc
+  ln -sf /home/$username/Documents/projects/default/dotfiles/.config/starship.toml ~/.config
+  ln -sf /home/$username/Documents/projects/default/dotfiles/.config/nvim/ ~/.config
 
-# ly config
-# -e 's/^bigclock *= *.*/bigclock = en/' \
-# sed -i \
-#   -e 's/^allow_empty_password *= *.*/allow_empty_password = false/' \
-#   -e 's/^clear_password *= *.*/clear_password = true/' \
-#   -e 's/^clock *= *.*/clock = %a %d\/%m %H:%M/' \
-#   /etc/ly/config.ini
+  # ly config
+  # -e 's/^bigclock *= *.*/bigclock = en/' \
+  # sed -i \
+  #   -e 's/^allow_empty_password *= *.*/allow_empty_password = false/' \
+  #   -e 's/^clear_password *= *.*/clear_password = true/' \
+  #   -e 's/^clock *= *.*/clock = %a %d\/%m %H:%M/' \
+  #   /etc/ly/config.ini
 
-# Greetd setup for tuigreet
-cp -f /home/$username/Documents/projects/default/dotfiles/config.toml /etc/greetd/
+  # Greetd setup for tuigreet
+  cp -f /home/$username/Documents/projects/default/dotfiles/config.toml /etc/greetd/
 
-# Setup Gruvbox theme
-THEME_SRC="/home/$username/Documents/projects/default/GruvboxQT"
-THEME_DEST="/usr/share/Kvantum/Gruvbox"
-mkdir -p "$THEME_DEST"
-cp "$THEME_SRC/gruvbox-kvantum.kvconfig" "$THEME_DEST/Gruvbox.kvconfig"
-cp "$THEME_SRC/gruvbox-kvantum.svg" "$THEME_DEST/Gruvbox.svg"
+  # Setup Gruvbox theme
+  THEME_SRC="/home/$username/Documents/projects/default/GruvboxQT"
+  THEME_DEST="/usr/share/Kvantum/Gruvbox"
+  mkdir -p "$THEME_DEST"
+  cp "$THEME_SRC/gruvbox-kvantum.kvconfig" "$THEME_DEST/Gruvbox.kvconfig"
+  cp "$THEME_SRC/gruvbox-kvantum.svg" "$THEME_DEST/Gruvbox.svg"
 
-THEME_SRC="/home/$username/Documents/projects/default/GruvboxGtk"
-THEME_DEST="/usr/share"
-cp -r "$THEME_SRC/themes/Gruvbox-Material-Dark" "$THEME_DEST/themes"
-cp -r "$THEME_SRC/icons/Gruvbox-Material-Dark" "$THEME_DEST/icons"
+  THEME_SRC="/home/$username/Documents/projects/default/GruvboxGtk"
+  THEME_DEST="/usr/share"
+  cp -r "$THEME_SRC/themes/Gruvbox-Material-Dark" "$THEME_DEST/themes"
+  cp -r "$THEME_SRC/icons/Gruvbox-Material-Dark" "$THEME_DEST/icons"
 
-# Anancy-cpp rules
-git clone --depth=1 https://github.com/RogueScholar/ananicy.git
-git clone --depth=1 https://github.com/CachyOS/ananicy-rules.git
-mkdir -p /etc/ananicy.d/roguescholar /etc/ananicy.d/zz-cachyos
-cp -r ananicy/ananicy.d/* /etc/ananicy.d/roguescholar/
-cp -r ananicy-rules/00-default/* /etc/ananicy.d/zz-cachyos/
-cp -r ananicy-rules/00-types.types /etc/ananicy.d/zz-cachyos/
-cp -r ananicy-rules/00-cgroups.cgroups /etc/ananicy.d/zz-cachyos/
-tee /etc/ananicy.d/ananicy.conf >/dev/null <<'EOF'
+  # Anancy-cpp rules
+  git clone --depth=1 https://github.com/RogueScholar/ananicy.git
+  git clone --depth=1 https://github.com/CachyOS/ananicy-rules.git
+  mkdir -p /etc/ananicy.d/roguescholar /etc/ananicy.d/zz-cachyos
+  cp -r ananicy/ananicy.d/* /etc/ananicy.d/roguescholar/
+  cp -r ananicy-rules/00-default/* /etc/ananicy.d/zz-cachyos/
+  cp -r ananicy-rules/00-types.types /etc/ananicy.d/zz-cachyos/
+  cp -r ananicy-rules/00-cgroups.cgroups /etc/ananicy.d/zz-cachyos/
+  tee /etc/ananicy.d/ananicy.conf >/dev/null <<'EOF'
 check_freq = 15
 cgroup_load = false
 type_load = true
@@ -312,28 +291,72 @@ log_applied_rule = false
 cgroup_realtime_workaround = false
 EOF
 
-# Firefox policy
-mkdir -p /etc/firefox/policies
-ln -sf "/home/$username/Documents/projects/default/dotfiles/policies.json" /etc/firefox/policies/policies.json
+  # Firefox policy
+  mkdir -p /etc/firefox/policies
+  ln -sf "/home/$username/Documents/projects/default/dotfiles/policies.json" /etc/firefox/policies/policies.json
+fi
+
+su - "$username" -c '
+mkdir -p ~/Downloads ~/Desktop ~/Public ~/Templates ~/Videos ~/Pictures/Screenshots/temp ~/.config
+mkdir -p ~/Documents/projects/work ~/Documents/projects/sandbox ~/Documents/personal/wiki
+mkdir -p ~/.local/bin ~/.cache/cargo-target ~/.local/state/bash ~/.local/state/zsh ~/.local/share/wineprefixes
+touch ~/.local/state/bash/history ~/.local/state/zsh/history ~/Documents/personal/wiki/index.txt
+
+  # Copy and link files (only if dotfiles exists)
+  if [[ -d ~/Documents/projects/default/dotfiles ]]; then
+    cp ~/Documents/projects/default/dotfiles/.config/sway/archLogo.png ~/Pictures/
+    cp ~/Documents/projects/default/dotfiles/pics/* ~/Pictures/
+    ln -sf ~/Documents/projects/default/dotfiles/.bashrc ~/.bashrc
+    ln -sf ~/Documents/projects/default/dotfiles/.zshrc ~/.zshrc
+
+    for link in ~/Documents/projects/default/dotfiles/.config/*; do
+      ln -sf "$link" ~/.config/
+    done
+    for link in ~/Documents/projects/default/dotfiles/.copy/*; do
+      cp -r "$link" ~/.config/
+    done
+    for link in ~/Documents/projects/default/scripts/bin/*; do
+      ln -sf "$link" ~/.local/bin/
+    done
+  fi
+
+  # Clone tpm
+  git clone https://github.com/tmux-plugins/tpm ~/.config/tmux/plugins/tpm
+  '
+# Delete variables
+shred -u /root/install.conf
 
 # zram config
+# Get total memory in MiB
+TOTAL_MEM=$(awk '/MemTotal/ {print int($2 / 1024)}' /proc/meminfo)
+ZRAM_SIZE=$((TOTAL_MEM / 2))
+
+# Create zram config
 mkdir -p /etc/systemd/zram-generator.conf.d
-printf "[zram0]\nzram-size=min(ram/2,4096)\ncompression-algorithm=zstd\nswap-priority=100\nfs-type=swap\n" | tee /etc/systemd/zram-generator.conf.d/00-zram.conf >/dev/null
+{
+  echo "[zram0]"
+  echo "zram-size = ${ZRAM_SIZE}"
+  echo "compression-algorithm = zstd #lzo-rle"
+  echo "swap-priority = 100"
+  echo "fs-type = swap"
+} >/etc/systemd/zram-generator.conf.d/00-zram.conf
 
 # services
 # rfkill unblock bluetooth
 # modprobe btusb || true
-systemctl enable NetworkManager NetworkManager-dispatcher greetd crond ananicy-cpp
-systemctl set-default graphical.target
-if [[ "$hardware" == "hardware" ]]; then
-  systemctl enable fstrim.timer acpid libvirtd.socket cups ipp-usb docker.socket
-  if [[ "$extra" == "laptop" || "$extra" == "bluetooth" ]]; then
-    systemctl enable bluetooth
-  fi
-  if [[ "$extra" == "laptop" ]]; then
-    systemctl enable tlp
+if [[ "$howMuch" == "max" ]]; then
+  systemctl set-default graphical.target
+  if [[ "$hardware" == "hardware" ]]; then
+    systemctl enable fstrim.timer acpid libvirtd.socket cups ipp-usb docker.socket
+    if [[ "$extra" == "laptop" || "$extra" == "bluetooth" ]]; then
+      systemctl enable bluetooth
+    fi
+    if [[ "$extra" == "laptop" ]]; then
+      systemctl enable tlp
+    fi
   fi
 fi
+systemctl enable NetworkManager NetworkManager-dispatcher greetd crond ananicy-cpp
 systemctl mask systemd-rfkill systemd-rfkill.socket
 systemctl disable NetworkManager-wait-online.service systemd-networkd.service systemd-resolved
 
