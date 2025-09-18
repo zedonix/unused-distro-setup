@@ -12,7 +12,7 @@ cleanup() {
   fi
   return $rc
 }
-trap cleanup EXIT
+# trap cleanup EXIT
 
 SCRIPT_DIR=$(dirname "$(realpath "$0")")
 cd "$SCRIPT_DIR"
