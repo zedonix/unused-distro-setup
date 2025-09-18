@@ -2,7 +2,6 @@
 set -euo pipefail
 
 # Source variables and shit
-source /etc/profile
 source /root/install.conf
 systemctl start NetworkManager
 
@@ -20,8 +19,8 @@ echo "LANG=en_US.UTF-8" >/etc/locale.conf
 
 # Sudo Configuration
 echo "%wheel ALL=(ALL) ALL" >/etc/sudoers.d/wheel
-echo "Defaults timestamp_timeout=-1" >/etc/sudoers.d/timestamp
-# echo "Defaults pwfeedback" >/etc/sudoers.d/pwfeedback
+echo "Defaults timestamp_timeout=30" >/etc/sudoers.d/timestamp
+echo "Defaults pwfeedback" >/etc/sudoers.d/pwfeedback
 chmod 440 /etc/sudoers.d/*
 
 # Tlp setup
@@ -159,12 +158,6 @@ EOF
   fi
 fi
 
-# Selinux
-cat >/etc/selinux/config <<'EOF'
-SELINUX=permissive
-SELINUXTYPE=targeted
-EOF
-
 # Boot Manager setup
 cat >/etc/dracut.conf.d/crypt.conf <<'EOF'
 add_dracutmodules+=" crypt "
@@ -183,6 +176,10 @@ else
 fi
 if [[ "$howMuch" == "max" ]]; then
   sed -i 's/\(GRUB_CMDLINE_LINUX_DEFAULT="[^"]*\)/\1 security=selinux selinux=1 enforcing=0/' /mnt/etc/default/grub
+  cat >/etc/selinux/config <<'EOF'
+SELINUX=permissive
+SELINUXTYPE=targeted
+EOF
 fi
 
 cat >/etc/default/grub <<EOF
