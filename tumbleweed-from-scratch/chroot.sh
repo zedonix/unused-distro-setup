@@ -194,6 +194,7 @@ grub2-mkconfig -o /boot/grub2/grub.cfg
 
 # Copy config and dotfiles as the user
 if [[ "$howMuch" == "max" ]]; then
+  npm install -g corepack@latest
   su - "$username" -c '
     mkdir -p ~/Documents/projects/default
     # Clone scripts
@@ -215,16 +216,10 @@ if [[ "$howMuch" == "max" ]]; then
   # Rustup
   # source $HOME/.cargo/env
   export PATH="$HOME/.cargo/bin:$PATH"
-  rustup update stable
   rustup default stable
-  # wl-clip-persist
-  git clone https://github.com/Linus789/wl-clip-persist.git
-  cd wl-clip-persist
-  cargo build --release
-  sudo install -Dm755 target/release/wl-clip-persist /usr/local/bin/wl-clip-persist
+  rustup update stable
 
   # Other package managers
-  sudo npm install -g corepack@latest
   corepack enable
   corepack prepare pnpm@latest --activate
   pipx ensurepath
@@ -232,6 +227,12 @@ if [[ "$howMuch" == "max" ]]; then
   pipx install unp
   cargo install caligula
   '
+  # wl-clip-persist
+  git clone https://github.com/Linus789/wl-clip-persist.git
+  cd wl-clip-persist
+  cargo build --release
+  install -Dm755 target/release/wl-clip-persist /usr/local/bin/wl-clip-persist
+
   # Root .config
   mkdir -p ~/.config ~/.local/state/bash ~/.local/state/zsh
   echo '[[ -f ~/.bashrc ]] && . ~/.bashrc' >~/.bash_profile
