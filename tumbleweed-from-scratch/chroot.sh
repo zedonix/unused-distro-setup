@@ -2,7 +2,6 @@
 set -euo pipefail
 
 # Source variables and shit
-source /etc/profile
 source /root/install.conf
 
 # --- Set hostname ---

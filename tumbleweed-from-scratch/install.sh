@@ -356,18 +356,6 @@ UUID=$ROOT_UUID	/	ext4	defaults	0	1
 EOF
 
 # Exporting variables for chroot
-chroot /mnt /bin/bash -s <<EOF
-source /etc/profile
-echo "root:$root_password" | chpasswd
-groupadd wheel
-if [[ "$howMuch" == "max" && "$hardware" == "hardware" ]]; then
-  useradd -m -G users,wheel,systemd-journal,disk,video,audio,lp,kvm,libvirt,docker -s /bin/bash "$username"
-else
-  useradd -m -G users,wheel,systemd-journal,disk,video,audio,lp -s /bin/bash "$username"
-fi
-echo "$username:$user_password" | chpasswd
-EOF
-
 cat >/mnt/root/install.conf <<EOF
 hostname=$hostname
 hardware=$hardware
@@ -383,7 +371,18 @@ chmod 700 /mnt/root/install.conf
 # Run chroot.sh
 cp chroot.sh /mnt/root/chroot.sh
 chmod 700 /mnt/root/chroot.sh
-chroot /mnt /bin/bash -c /root/chroot.sh
+chroot /mnt /bin/bash -s <<EOF
+source /etc/profile
+echo "root:$root_password" | chpasswd
+groupadd wheel
+if [[ "$howMuch" == "max" && "$hardware" == "hardware" ]]; then
+  useradd -m -G users,wheel,systemd-journal,disk,video,audio,lp,kvm,libvirt,docker -s /bin/bash "$username"
+else
+  useradd -m -G users,wheel,systemd-journal,disk,video,audio,lp -s /bin/bash "$username"
+fi
+echo "$username:$user_password" | chpasswd
+bash /root/chroot.sh
+EOF
 
 # Unmount and finalize
 fuser -k /mnt || true
