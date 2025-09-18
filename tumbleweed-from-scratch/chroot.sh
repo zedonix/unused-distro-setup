@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Load variables from install.conf
+# Source variables and shit
+source /etc/profile
 source /root/install.conf
-uuid=$(blkid -s UUID -o value "$part2")
 
 # --- Set hostname ---
 echo "$hostname" >/etc/hostname
@@ -177,6 +177,7 @@ dracut -f
 if [[ "$encryption" == "no" ]]; then
   GRUB_CMDLINE="root=${part2} rw quiet splash fsck.repair=yes zswap.enabled=0 ${pstate_param:-}"
 else
+  uuid=$(blkid -s UUID -o value "$part2")
   GRUB_CMDLINE="rd.luks.name=${uuid}=cryptroot root=/dev/mapper/cryptroot rw quiet splash fsck.repair=yes zswap.enabled=0 ${pstate_param:-}"
 fi
 if [[ "$howMuch" == "max" ]]; then
