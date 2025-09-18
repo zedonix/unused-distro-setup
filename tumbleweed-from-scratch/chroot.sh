@@ -352,7 +352,7 @@ if [[ "$howMuch" == "max" ]]; then
     fi
   fi
 fi
-systemctl enable NetworkManager NetworkManager-dispatcher greetd crond ananicy-cpp
+systemctl enable NetworkManager NetworkManager-dispatcher
 systemctl mask systemd-rfkill systemd-rfkill.socket
 systemctl disable NetworkManager-wait-online.service systemd-networkd.service systemd-resolved
 
