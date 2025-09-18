@@ -175,7 +175,7 @@ else
   GRUB_CMDLINE="rd.luks.name=${uuid}=cryptroot root=/dev/mapper/cryptroot rw quiet splash fsck.repair=yes zswap.enabled=0 ${pstate_param:-}"
 fi
 if [[ "$howMuch" == "max" ]]; then
-  sed -i 's/\(GRUB_CMDLINE_LINUX_DEFAULT="[^"]*\)/\1 security=selinux selinux=1 enforcing=0/' /mnt/etc/default/grub
+  sed -i 's/\(GRUB_CMDLINE_LINUX_DEFAULT="[^"]*\)/\1 security=selinux selinux=1 enforcing=0/' /etc/default/grub
   cat >/etc/selinux/config <<'EOF'
 SELINUX=permissive
 SELINUXTYPE=targeted
