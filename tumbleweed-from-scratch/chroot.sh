@@ -198,7 +198,8 @@ if [[ "$howMuch" == "max" ]]; then
   export RUSTUP_HOME="/usr/local/rustup"
   # export CARGO_TARGET_DIR="$XDG_CACHE_HOME/cargo-target"
   export PATH="$CARGO_HOME/bin:$PATH"
-  rustup -y
+  ln -s "$(command -v rustup)" /usr/bin/rustup-init
+  /usr/bin/rustup-init -y
   # rustup default stable
   # rustup update
   npm install -g corepack@latest
