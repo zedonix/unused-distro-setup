@@ -100,7 +100,7 @@ while true; do
 done
 
 min=8
-echo "Password (min $min chars)"
+echo "Passwords must be minimum $min"
 # Root Password
 while true; do
   read -s -p "Root password: " root_password
@@ -135,7 +135,7 @@ done
 parted -s "$disk" mklabel gpt
 parted -s "$disk" mkpart ESP fat32 1MiB 2049MiB
 parted -s "$disk" set 1 esp on
-parted -s "$disk" mkpart primary ext4 2049MiB 100%
+parted -s "$disk" mkpart primary btrfs 2049MiB 100%
 
 # Luks encryption
 if [[ "$encryption" == "yes" ]]; then
@@ -147,14 +147,12 @@ fi
 mkfs.fat -F 32 -n BOOT "$part1"
 
 if [[ "$encryption" == "no" ]]; then
-  mkfs.ext4 -L ROOT "$part2"
-  tune2fs -O fast_commit "$part2"
+  mkfs.btrfs -L ROOT "$part2"
 else
-  mkfs.ext4 -L ROOT /dev/mapper/cryptroot
-  tune2fs -O fast_commit /dev/mapper/cryptroot
+  mkfs.btrfs -L ROOT /dev/mapper/cryptroot
 fi
 
-# Mounting
+# Mounting & btfs subvolume
 if [[ "$encryption" == "no" ]]; then
   mount "$part2" /mnt
 else
@@ -162,6 +160,16 @@ else
 fi
 mkdir -p /mnt/boot/efi
 mount "$part1" /mnt/boot/efi
+
+# Btrfs subvolume shit and mounting it
+btrfs subvolume create /mnt/@
+btrfs subvolume create /mnt/@home
+btrfs subvolume create /mnt/@var
+btrfs subvolume create /mnt/@snapshots
+mkdir -p /mnt/{home,var,.snapshots}
+mount -o noatime,compress=zstd,ssd,space_cache=v2,discard=async,subvol=@home "$part2" /mnt/home
+mount -o noatime,compress=zstd,ssd,space_cache=v2,discard=async,subvol=@var "$part2" /mnt/var
+mount -o noatime,compress=zstd,ssd,space_cache=v2,discard=async,subvol=@snapshots "$part2" /mnt/.snapshots
 
 # Prepare chroot
 mkdir -p /mnt/{proc,sys,dev,run}
@@ -352,7 +360,8 @@ zypper --root /mnt ref -f
 
 # Packages installation
 echo "solver.onlyRequires = true" | sudo tee -a /mnt/etc/zypp/zypp.conf
-xargs -a pkglists.txt -r zypper --root /mnt install -y
+xargs -a pkglists.txt -r zypper --root /mnt install --dry-run
+# xargs -a pkglists.txt -r zypper --root /mnt install -y
 
 ESP_UUID=$(blkid -s UUID -o value "$part1")
 ROOT_UUID=$(blkid -s UUID -o value "$part2")

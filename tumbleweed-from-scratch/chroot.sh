@@ -192,8 +192,29 @@ EOF
 grub2-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=GRUB
 grub2-mkconfig -o /boot/grub2/grub.cfg
 
-# Copy config and dotfiles as the user
 if [[ "$howMuch" == "max" ]]; then
+  # Snapper Config
+  snapper -c root create-config /
+  snapper -c home create-config /home
+  # root
+  snapper -c root set-config TIMELINE_CREATE=yes
+  snapper -c root set-config TIMELINE_CLEANUP=yes
+  snapper -c root set-config TIMELINE_LIMIT_DAILY=3
+  snapper -c root set-config TIMELINE_LIMIT_WEEKLY=0
+  snapper -c root set-config TIMELINE_LIMIT_MONTHLY=2
+  snapper -c root set-config TIMELINE_MIN_AGE=3600
+  snapper -c root set-config NUMBER_CLEANUP=yes
+  snapper -c root set-config NUMBER_LIMIT=50
+  # home
+  snapper -c home set-config TIMELINE_CREATE=yes
+  snapper -c home set-config TIMELINE_CLEANUP=yes
+  snapper -c home set-config TIMELINE_LIMIT_DAILY=3
+  snapper -c home set-config TIMELINE_LIMIT_WEEKLY=0
+  snapper -c home set-config TIMELINE_LIMIT_MONTHLY=2
+  snapper -c home set-config TIMELINE_MIN_AGE=3600
+  snapper -c home set-config NUMBER_CLEANUP=yes
+  snapper -c home set-config NUMBER_LIMIT=50
+
   npm install -g corepack@latest
   runuser -u "$username" -- /bin/bash -lc '
     export XDG_DATA_HOME="$HOME/.local/share"
@@ -303,6 +324,7 @@ EOF
   ln -sf "/home/$username/Documents/projects/default/dotfiles/policies.json" /etc/firefox/policies/policies.json
 fi
 
+# Copy config and dotfiles as the user
 runuser -u "$username" -- /bin/bash -lc '
   mkdir -p ~/Desktop ~/Public ~/Templates ~/Videos ~/Pictures/Screenshots/temp ~/.config
   mkdir -p ~/Documents/projects/work ~/Documents/projects/sandbox ~/Documents/personal/wiki
@@ -363,6 +385,8 @@ if [[ "$howMuch" == "max" ]]; then
   fi
 fi
 systemctl enable NetworkManager NetworkManager-dispatcher
+systemctl enable btrfs-scrub@-.timer btrfs-scrub@home.timer btrfs-scrub@var.timer
+systemctl enable --now snapper-timeline.timer snapper-cleanup.timer
 systemctl disable NetworkManager-wait-online.service
 systemctl mask systemd-rfkill systemd-rfkill.socket
 
