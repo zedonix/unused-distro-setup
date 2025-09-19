@@ -21,6 +21,9 @@ cd "$SCRIPT_DIR"
 timezone="Asia/Kolkata"
 username="piyush"
 
+# Make passwd shit better
+echo "Defaults pwfeedback" >/etc/sudoers.d/pwfeedback
+
 # Installing necessary stuff
 # zypper install -y parted
 
@@ -360,15 +363,18 @@ zypper --root /mnt ref -f
 
 # Packages installation
 echo "solver.onlyRequires = true" | sudo tee -a /mnt/etc/zypp/zypp.conf
-xargs -a pkglists.txt -r zypper --root /mnt install --dry-run
-# xargs -a pkglists.txt -r zypper --root /mnt install -y
+# xargs -a pkglists.txt -r zypper --root /mnt install --dry-run
+xargs -a pkglists.txt -r zypper --root /mnt install -y --dry-run
 
 ESP_UUID=$(blkid -s UUID -o value "$part1")
 ROOT_UUID=$(blkid -s UUID -o value "$part2")
 cat >/mnt/etc/fstab <<EOF
 # <file system>	<mount point>	<type>	<options>	<dump>	<pass>
 UUID=$ESP_UUID	/boot/efi	vfat	defaults	0	2
-UUID=$ROOT_UUID	/	ext4	defaults	0	1
+UUID=$ROOT_UUID	/	btrfs	subvol=@,noatime,compress=zstd,space_cache=v2,discard=async	0	0
+UUID=$ROOT_UUID	/home	btrfs	subvol=@home,noatime,compress=zstd,space_cache=v2,discard=async	0	0
+UUID=$ROOT_UUID	/var	btrfs	subvol=@var,noatime,compress=zstd,space_cache=v2,discard=async	0	0
+UUID=$ROOT_UUID	/.snapshots	btrfs	subvol=@snapshots,noatime,compress=zstd,space_cache=v2,discard=async	0	0
 EOF
 
 # Exporting variables for chroot
