@@ -100,9 +100,10 @@ while true; do
 done
 
 min=8
+echo "Password (min $min chars)"
 # Root Password
 while true; do
-  read -s -p "Root password (min $min chars): " root_password
+  read -s -p "Root password: " root_password
   echo
   if ((${#root_password} < min)); then
     echo "Password must be at least $min characters."
@@ -117,7 +118,7 @@ done
 
 # User Password
 while true; do
-  read -s -p "User password (min $min chars): " user_password
+  read -s -p "User password: " user_password
   echo
   if ((${#user_password} < min)); then
     echo "Password must be at least $min characters."
