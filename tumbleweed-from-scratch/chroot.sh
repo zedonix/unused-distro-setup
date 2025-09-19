@@ -194,34 +194,19 @@ grub2-mkconfig -o /boot/grub2/grub.cfg
 
 # Copy config and dotfiles as the user
 if [[ "$howMuch" == "max" ]]; then
-  mkdir -p /usr/local/rustup /usr/local/cargo
-  chown root:root /usr/local/rustup /usr/local/cargo
-  chmod 0755 /usr/local/rustup /usr/local/cargo
-
-  if command -v rustup-init >/dev/null 2>&1; then
-    env RUSTUP_HOME=/usr/local/rustup CARGO_HOME=/usr/local/cargo rustup-init -y
-  else
-    env RUSTUP_HOME=/usr/local/rustup CARGO_HOME=/usr/local/cargo \
-      bash -c 'curl --proto "=https" --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y'
-  fi
-
-  cat >/etc/profile.d/rust.sh <<'EOF'
-export RUSTUP_HOME=/usr/local/rustup
-export CARGO_HOME=/usr/local/cargo
-export PATH=$CARGO_HOME/bin:$PATH
-EOF
-  chmod 0644 /etc/profile.d/rust.sh
-
-  for f in /usr/local/cargo/bin/*; do
-    [ -e "$f" ] || continue
-    ln -sf "$f" /usr/local/bin/"$(basename "$f")"
-  done
-
-  env RUSTUP_HOME=/usr/local/rustup CARGO_HOME=/usr/local/cargo rustup default stable >/dev/null 2>&1 || true
-  env RUSTUP_HOME=/usr/local/rustup CARGO_HOME=/usr/local/cargo rustup update >/dev/null 2>&1 || true
+  export CARGO_HOME="/usr/local/cargo"
+  export RUSTUP_HOME="/usr/local/rustup"
+  export CARGO_TARGET_DIR="$XDG_CACHE_HOME/cargo-target"
+  export PATH="$CARGO_HOME/bin:$PATH"
+  rustup-init -y
+  # rustup default stable
+  # rustup update
   npm install -g corepack@latest
 
   su - "$username" -c '
+    export CARGO_HOME="/usr/local/cargo"
+    export RUSTUP_HOME="/usr/local/rustup"
+    export PATH="$CARGO_HOME/bin:$PATH"
     mkdir -p ~/Documents/projects/default
     # Clone scripts
     git clone https://github.com/zedonix/scripts.git ~/Documents/projects/default/scripts
@@ -231,22 +216,22 @@ EOF
     git clone https://github.com/zedonix/GruvboxGtk.git ~/Documents/projects/default/GruvboxGtk
     git clone https://github.com/zedonix/GruvboxQT.git ~/Documents/projects/default/GruvboxQT
 
-  # External installation
-  # Iosevka
-  mkdir -p ~/.local/share/fonts/iosevka
-  cd ~/.local/share/fonts/iosevka
-  curl -LO https://github.com/ryanoasis/nerd-fonts/releases/latest/download/IosevkaTerm.zip
-  unzip IosevkaTerm.zip
-  rm IosevkaTerm.zip
+    # External installation
+    # Iosevka
+    mkdir -p ~/.local/share/fonts/iosevka
+    cd ~/.local/share/fonts/iosevka
+    curl -LO https://github.com/ryanoasis/nerd-fonts/releases/latest/download/IosevkaTerm.zip
+    unzip IosevkaTerm.zip
+    rm IosevkaTerm.zip
 
-  # Other package managers
-  corepack enable
-  corepack prepare pnpm@latest --activate
-  pipx ensurepath
-  pipx install thefuck
-  pipx runpip thefuck install setuptools
-  pipx install unp
-  cargo install caligula
+    # Other package managers
+    corepack enable
+    corepack prepare pnpm@latest --activate
+    pipx ensurepath
+    pipx install thefuck
+    pipx runpip thefuck install setuptools
+    pipx install unp
+    cargo install caligula
   '
   # wl-clip-persist
   export PATH="$HOME/.cargo/bin:$PATH"
