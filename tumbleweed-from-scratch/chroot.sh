@@ -194,20 +194,15 @@ grub2-mkconfig -o /boot/grub2/grub.cfg
 
 # Copy config and dotfiles as the user
 if [[ "$howMuch" == "max" ]]; then
-  export CARGO_HOME="/usr/local/cargo"
-  export RUSTUP_HOME="/usr/local/rustup"
-  # export CARGO_TARGET_DIR="$XDG_CACHE_HOME/cargo-target"
-  export PATH="$CARGO_HOME/bin:$PATH"
-  ln -s "$(command -v rustup)" /usr/bin/rustup-init
-  /usr/bin/rustup-init -y
-  # rustup default stable
-  # rustup update
-  npm install -g corepack@latest
+  runuser -u "$username" -- /bin/bash -lc '
+    export XDG_DATA_HOME="$HOME/.local/share"
+    export XDG_CACHE_HOME="$HOME/.cache"
+    export PATH="$HOME/.local/bin:$PATH"
+    export CARGO_HOME="$XDG_DATA_HOME"/cargo
+    export CARGO_TARGET_DIR="$XDG_CACHE_HOME/cargo-target"
+    export PATH="$HOME/.cargo/bin:$PATH"
+    export RUSTUP_HOME="$XDG_DATA_HOME/rustup"
 
-  su - "$username" -c '
-    export CARGO_HOME="/usr/local/cargo"
-    export RUSTUP_HOME="/usr/local/rustup"
-    export PATH="$CARGO_HOME/bin:$PATH"
     mkdir -p ~/Documents/projects/default
     # Clone scripts
     git clone https://github.com/zedonix/scripts.git ~/Documents/projects/default/scripts
@@ -218,6 +213,9 @@ if [[ "$howMuch" == "max" ]]; then
     git clone https://github.com/zedonix/GruvboxQT.git ~/Documents/projects/default/GruvboxQT
 
     # External installation
+    npm install -g corepack@latest
+    rustup default stable
+    rustup update
     # Iosevka
     mkdir -p ~/.local/share/fonts/iosevka
     cd ~/.local/share/fonts/iosevka
@@ -233,13 +231,13 @@ if [[ "$howMuch" == "max" ]]; then
     pipx runpip thefuck install setuptools
     pipx install unp
     cargo install caligula
+    # wl-clip-persist
+    export PATH="$HOME/.cargo/bin:$PATH"
+    git clone https://github.com/Linus789/wl-clip-persist.git
+    cd wl-clip-persist
+    cargo build --release
+    install -Dm755 target/release/wl-clip-persist /usr/local/bin/wl-clip-persist
   '
-  # wl-clip-persist
-  export PATH="$HOME/.cargo/bin:$PATH"
-  git clone https://github.com/Linus789/wl-clip-persist.git
-  cd wl-clip-persist
-  cargo build --release
-  install -Dm755 target/release/wl-clip-persist /usr/local/bin/wl-clip-persist
 
   # Root .config
   mkdir -p ~/.config ~/.local/state/bash ~/.local/state/zsh
@@ -302,11 +300,11 @@ EOF
   ln -sf "/home/$username/Documents/projects/default/dotfiles/policies.json" /etc/firefox/policies/policies.json
 fi
 
-su - "$username" -c '
-mkdir -p ~/Downloads ~/Desktop ~/Public ~/Templates ~/Videos ~/Pictures/Screenshots/temp ~/.config
-mkdir -p ~/Documents/projects/work ~/Documents/projects/sandbox ~/Documents/personal/wiki
-mkdir -p ~/.local/bin ~/.cache/cargo-target ~/.local/state/bash ~/.local/state/zsh ~/.local/share/wineprefixes
-touch ~/.local/state/bash/history ~/.local/state/zsh/history ~/Documents/personal/wiki/index.txt
+runuser -u "$username" -- /bin/bash -lc '
+  mkdir -p ~/Downloads ~/Desktop ~/Public ~/Templates ~/Videos ~/Pictures/Screenshots/temp ~/.config
+  mkdir -p ~/Documents/projects/work ~/Documents/projects/sandbox ~/Documents/personal/wiki
+  mkdir -p ~/.local/bin ~/.cache/cargo-target ~/.local/state/bash ~/.local/state/zsh ~/.local/share/wineprefixes
+  touch ~/.local/state/bash/history ~/.local/state/zsh/history ~/Documents/personal/wiki/index.txt
 
   # Copy and link files (only if dotfiles exists)
   if [[ -d ~/Documents/projects/default/dotfiles ]]; then
