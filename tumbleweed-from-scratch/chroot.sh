@@ -189,7 +189,7 @@ GRUB_DISTRIBUTOR="openSUSE"
 GRUB_CMDLINE_LINUX="${GRUB_CMDLINE}"
 GRUB_DISABLE_OS_PROBER=false
 EOF
-grub2-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
+grub2-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=GRUB
 grub2-mkconfig -o /boot/grub2/grub.cfg
 
 # Copy config and dotfiles as the user

@@ -160,8 +160,8 @@ if [[ "$encryption" == "no" ]]; then
 else
   mount /dev/mapper/cryptroot /mnt
 fi
-mkdir -p /mnt/boot
-mount "$part1" /mnt/boot
+mkdir -p /mnt/boot/efi
+mount "$part1" /mnt/boot/efi
 
 # Prepare chroot
 mkdir -p /mnt/{proc,sys,dev,run}
@@ -172,9 +172,6 @@ mount --rbind /dev /mnt/dev
 mount --make-rslave /mnt/dev
 mount --bind /run /mnt/run
 mount --make-slave /mnt/run
-
-# copy resolv.conf so zypper inside the new root can resolve DNS
-# cp /etc/resolv.conf /mnt/etc/resolv.conf
 
 # Detect CPU vendor and set microcode package
 cpu_vendor=$(lscpu | awk -F: '/Vendor ID:/ {print $2}' | xargs)
@@ -361,7 +358,7 @@ ESP_UUID=$(blkid -s UUID -o value "$part1")
 ROOT_UUID=$(blkid -s UUID -o value "$part2")
 cat >/mnt/etc/fstab <<EOF
 # <file system>	<mount point>	<type>	<options>	<dump>	<pass>
-UUID=$ESP_UUID	/boot	vfat	defaults	0	2
+UUID=$ESP_UUID	/boot/efi	vfat	defaults	0	2
 UUID=$ROOT_UUID	/	ext4	defaults	0	1
 EOF
 
