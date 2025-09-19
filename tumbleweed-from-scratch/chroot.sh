@@ -225,7 +225,7 @@ if [[ "$howMuch" == "max" ]]; then
     export PATH="$HOME/.cargo/bin:$PATH"
     export RUSTUP_HOME="$XDG_DATA_HOME/rustup"
 
-    mkdir -p ~/Documents/projects/default
+    mkdir -p ~/Documents/projects/default ~/Downloads
     # Clone scripts
     git clone https://github.com/zedonix/scripts.git ~/Documents/projects/default/scripts
     git clone https://github.com/zedonix/dotfiles.git ~/Documents/projects/default/dotfiles
@@ -235,6 +235,7 @@ if [[ "$howMuch" == "max" ]]; then
     git clone https://github.com/zedonix/GruvboxQT.git ~/Documents/projects/default/GruvboxQT
 
     # External installation
+    cd ~/Downloads
     rustup default stable
     rustup update
     # Iosevka
@@ -243,6 +244,12 @@ if [[ "$howMuch" == "max" ]]; then
     curl -LO https://github.com/ryanoasis/nerd-fonts/releases/latest/download/IosevkaTerm.zip
     unzip IosevkaTerm.zip
     rm IosevkaTerm.zip
+    # wl-clip-persist
+    export PATH="$HOME/.cargo/bin:$PATH"
+    git clone https://github.com/Linus789/wl-clip-persist.git
+    cd wl-clip-persist
+    cargo build --release
+    install -Dm755 target/release/wl-clip-persist /usr/local/bin/wl-clip-persist
 
     # Other package managers
     corepack enable
@@ -252,16 +259,7 @@ if [[ "$howMuch" == "max" ]]; then
     pipx runpip thefuck install setuptools
     pipx install unp
     cargo install caligula
-    # wl-clip-persist
-    mkdir -p Downloads
-    cd ~/Downloads
-    export PATH="$HOME/.cargo/bin:$PATH"
-    git clone https://github.com/Linus789/wl-clip-persist.git
-    cd wl-clip-persist
-    cargo build --release
-    install -Dm755 target/release/wl-clip-persist /usr/local/bin/wl-clip-persist
   '
-  cd /home/$username/
 
   # Root .config
   mkdir -p ~/.config ~/.local/state/bash ~/.local/state/zsh

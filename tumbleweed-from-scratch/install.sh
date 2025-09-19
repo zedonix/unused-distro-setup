@@ -352,13 +352,18 @@ fi
 
 # tumbleweed repo
 if [[ "$howMuch" == "max" ]]; then
-  zypper --root /mnt --gpg-auto-import-keys ar -cf https://download.opensuse.org/tumbleweed/repo/non-oss/ repo-non-oss
-  zypper --root /mnt --gpg-auto-import-keys ar -cf https://download.opensuse.org/update/tumbleweed/ repo-update
-  zypper --root /mnt --gpg-auto-import-keys ar -cfp 90 http://ftp.gwdg.de/pub/linux/misc/packman/suse/openSUSE_Tumbleweed/ packman
-  zypper --root /mnt --gpg-auto-import-keys ar -cf obs://home:iDesmI/openSUSE_Tumbleweed ananicy-cpp
+  rpm --root /mnt --import https://download.opensuse.org/tumbleweed/repo/non-oss/repodata/repomd.xml.key
+  rpm --root /mnt --import https://download.opensuse.org/update/tumbleweed/repodata/repomd.xml.key
+  rpm --root /mnt --import https://download.opensuse.org/repositories/home:/iDesmI/openSUSE_Tumbleweed/repodata/repomd.xml.key
+  zypper --root /mnt ar -cf https://download.opensuse.org/tumbleweed/repo/non-oss/ repo-non-oss
+  zypper --root /mnt ar -cf https://download.opensuse.org/update/tumbleweed/ repo-update
+  zypper --root /mnt ar -cfp 90 http://ftp.gwdg.de/pub/linux/misc/packman/suse/openSUSE_Tumbleweed/ packman
+  zypper --root /mnt ar -cf obs://home:iDesmI/openSUSE_Tumbleweed ananicy-cpp
   # zypper dup --from packman --allow-vendor-change
 fi
-zypper --root /mnt --gpg-auto-import-keys ar -cf https://download.opensuse.org/tumbleweed/repo/oss/ repo-oss
+rpm --root /mnt --import https://download.opensuse.org/tumbleweed/repo/oss/repodata/repomd.xml.key
+zypper --root /mnt ar -cf https://download.opensuse.org/tumbleweed/repo/oss/ repo-oss
+# Refresh metadata
 zypper --root /mnt ref -f
 
 # Packages installation
