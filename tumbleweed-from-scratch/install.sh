@@ -363,8 +363,7 @@ zypper --root /mnt ref -f
 
 # Packages installation
 echo "solver.onlyRequires = true" | sudo tee -a /mnt/etc/zypp/zypp.conf
-# xargs -a pkglists.txt -r zypper --root /mnt install --dry-run
-xargs -a pkglists.txt -r zypper --root /mnt install -y --dry-run
+xargs -a pkglists.txt -r zypper --root /mnt install -y
 
 ESP_UUID=$(blkid -s UUID -o value "$part1")
 ROOT_UUID=$(blkid -s UUID -o value "$part2")
