@@ -196,7 +196,7 @@ grub2-mkconfig -o /boot/grub2/grub.cfg
 if [[ "$howMuch" == "max" ]]; then
   export CARGO_HOME="/usr/local/cargo"
   export RUSTUP_HOME="/usr/local/rustup"
-  export CARGO_TARGET_DIR="$XDG_CACHE_HOME/cargo-target"
+  # export CARGO_TARGET_DIR="$XDG_CACHE_HOME/cargo-target"
   export PATH="$CARGO_HOME/bin:$PATH"
   rustup-init -y
   # rustup default stable
