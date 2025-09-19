@@ -194,7 +194,33 @@ grub2-mkconfig -o /boot/grub2/grub.cfg
 
 # Copy config and dotfiles as the user
 if [[ "$howMuch" == "max" ]]; then
+  mkdir -p /usr/local/rustup /usr/local/cargo
+  chown root:root /usr/local/rustup /usr/local/cargo
+  chmod 0755 /usr/local/rustup /usr/local/cargo
+
+  if command -v rustup-init >/dev/null 2>&1; then
+    env RUSTUP_HOME=/usr/local/rustup CARGO_HOME=/usr/local/cargo rustup-init -y
+  else
+    env RUSTUP_HOME=/usr/local/rustup CARGO_HOME=/usr/local/cargo \
+      bash -c 'curl --proto "=https" --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y'
+  fi
+
+  cat >/etc/profile.d/rust.sh <<'EOF'
+export RUSTUP_HOME=/usr/local/rustup
+export CARGO_HOME=/usr/local/cargo
+export PATH=$CARGO_HOME/bin:$PATH
+EOF
+  chmod 0644 /etc/profile.d/rust.sh
+
+  for f in /usr/local/cargo/bin/*; do
+    [ -e "$f" ] || continue
+    ln -sf "$f" /usr/local/bin/"$(basename "$f")"
+  done
+
+  env RUSTUP_HOME=/usr/local/rustup CARGO_HOME=/usr/local/cargo rustup default stable >/dev/null 2>&1 || true
+  env RUSTUP_HOME=/usr/local/rustup CARGO_HOME=/usr/local/cargo rustup update >/dev/null 2>&1 || true
   npm install -g corepack@latest
+
   su - "$username" -c '
     mkdir -p ~/Documents/projects/default
     # Clone scripts
@@ -213,12 +239,6 @@ if [[ "$howMuch" == "max" ]]; then
   unzip IosevkaTerm.zip
   rm IosevkaTerm.zip
 
-  # Rustup
-  # source $HOME/.cargo/env
-  export PATH="$HOME/.cargo/bin:$PATH"
-  rustup default stable
-  rustup update stable
-
   # Other package managers
   corepack enable
   corepack prepare pnpm@latest --activate
@@ -229,6 +249,7 @@ if [[ "$howMuch" == "max" ]]; then
   cargo install caligula
   '
   # wl-clip-persist
+  export PATH="$HOME/.cargo/bin:$PATH"
   git clone https://github.com/Linus789/wl-clip-persist.git
   cd wl-clip-persist
   cargo build --release
