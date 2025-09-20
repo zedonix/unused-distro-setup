@@ -174,9 +174,6 @@ mount -o noatime,compress=zstd,ssd,space_cache=v2,discard=async,subvol=@home "$p
 mount -o noatime,compress=zstd,ssd,space_cache=v2,discard=async,subvol=@var "$part2" /mnt/var
 mount -o noatime,compress=zstd,ssd,space_cache=v2,discard=async,subvol=@snapshots "$part2" /mnt/.snapshots
 
-btrfs subvolume list /mnt
-read
-
 # Prepare chroot
 mkdir -p /mnt/{proc,sys,dev,run}
 mount --types proc /proc /mnt/proc
@@ -355,13 +352,13 @@ fi
 
 # tumbleweed repo
 if [[ "$howMuch" == "max" ]]; then
-  zypper --root /mnt --no-gpg-checks ar -cf https://download.opensuse.org/tumbleweed/repo/non-oss/ repo-non-oss
-  zypper --root /mnt --no-gpg-checks ar -cf https://download.opensuse.org/update/tumbleweed/ repo-update
-  zypper --root /mnt --no-gpg-checks ar -cfp 90 http://ftp.gwdg.de/pub/linux/misc/packman/suse/openSUSE_Tumbleweed/ packman
-  zypper --root /mnt --no-gpg-checks ar -cf obs://home:iDesmI/openSUSE_Tumbleweed ananicy-cpp
+  zypper --root /mnt ar -cf https://download.opensuse.org/tumbleweed/repo/non-oss/ repo-non-oss
+  zypper --root /mnt ar -cf https://download.opensuse.org/update/tumbleweed/ repo-update
+  zypper --root /mnt ar -cfp 90 http://ftp.gwdg.de/pub/linux/misc/packman/suse/openSUSE_Tumbleweed/ packman
+  zypper --root /mnt ar -cf obs://home:iDesmI/openSUSE_Tumbleweed ananicy-cpp
   # zypper dup --from packman --allow-vendor-change
 fi
-zypper --root /mnt --no-gpg-checks ar -cf https://download.opensuse.org/tumbleweed/repo/oss/ repo-oss
+zypper --root /mnt ar -cf https://download.opensuse.org/tumbleweed/repo/oss/ repo-oss
 # Refresh metadata
 zypper --root /mnt ref -f
 
