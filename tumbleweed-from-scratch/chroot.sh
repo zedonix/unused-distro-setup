@@ -252,6 +252,18 @@ if [[ "$howMuch" == "max" ]]; then
   meson setup build
   ninja -C build
   ninja -C build install
+  # Newscraft
+  cd /root
+  git clone https://codeberg.org/newsraft/newsraft.git
+  cd newscraft
+  make
+  make install
+  # ly
+  cd /root
+  git clone https://codeberg.org/fairyglade/ly.git
+  cd ly
+  zig build -Dinit_system=systemd -Dtarget=x86_64-linux-gnu -Denable_x11_support=false 2>&1 | tee ~/ly-build.log
+  zig build installexe -Dinit_system=systemd
 
   # Root .config
   mkdir -p ~/.config ~/.local/state/bash ~/.local/state/zsh
