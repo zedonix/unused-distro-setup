@@ -194,9 +194,11 @@ grub2-mkconfig -o /boot/grub2/grub.cfg
 
 if [[ "$howMuch" == "max" ]]; then
   # Snapper Config
-  btrfs subvolume show /.snapshots
+  umount /.snapshots
+  rm -rf /.snapshots
   snapper -c root create-config /
   snapper -c home create-config /home
+  mount -a
   # root
   snapper -c root set-config TIMELINE_CREATE=yes
   snapper -c root set-config TIMELINE_CLEANUP=yes
