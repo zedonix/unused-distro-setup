@@ -312,7 +312,7 @@ for pkg in "${required_pkgs[@]}"; do
 done
 firmware_string="${firmware_string% }"
 if [[ -z "$firmware_string" ]]; then
-  firmware_string="linux-firmware"
+  firmware_string="kernel-firmware"
 fi
 sed -i "s|linux-firmware|$firmware_string|g" pkgss.txt
 
