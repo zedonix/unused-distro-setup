@@ -144,6 +144,7 @@ parted -s "$disk" mkpart primary btrfs 2049MiB 100%
 if [[ "$encryption" == "yes" ]]; then
   cryptsetup luksFormat "$part2"
   cryptsetup open "$part2" cryptroot
+  cryptsetup luksHeaderBackup "$part2" --header-backup-file /root/encryption-header.img
 fi
 
 # Formatting
@@ -364,7 +365,7 @@ zypper --root /mnt ref -f
 
 # Packages installation
 echo "solver.onlyRequires = true" | sudo tee -a /mnt/etc/zypp/zypp.conf
-xargs -a pkglists.txt -r zypper --root /mnt install -y
+xargs -a pkglists.txt -r zypper --root /mnt install --no-recommends --details -y
 
 ESP_UUID=$(blkid -s UUID -o value "$part1")
 ROOT_UUID=$(blkid -s UUID -o value "$part2")

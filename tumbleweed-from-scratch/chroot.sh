@@ -239,10 +239,19 @@ if [[ "$howMuch" == "max" ]]; then
     cargo install caligula
   '
   # sway-idle-inhibit
+  cd /root
   git clone https://github.com/ErikReider/SwayAudioIdleInhibit.git
+  cd SwayAudioIdleInhibit
   meson setup build -Dlogind-provider=systemd
   meson compile -C build
   meson install -C build
+  # Poweralertd
+  cd /root
+  git clone https://github.com/kennylevinsen/poweralertd.git
+  cd poweralertd
+  meson setup build
+  ninja -C build
+  ninja -C build install
 
   # Root .config
   mkdir -p ~/.config ~/.local/state/bash ~/.local/state/zsh
