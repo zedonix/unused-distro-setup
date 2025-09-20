@@ -194,6 +194,8 @@ grub2-mkconfig -o /boot/grub2/grub.cfg
 
 if [[ "$howMuch" == "max" ]]; then
   # Snapper Config
+  btrfs subvolume list /
+  sleep 5
   snapper -c root create-config /
   snapper -c home create-config /home
   # root

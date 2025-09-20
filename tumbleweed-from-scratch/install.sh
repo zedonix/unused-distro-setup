@@ -174,6 +174,9 @@ mount -o noatime,compress=zstd,ssd,space_cache=v2,discard=async,subvol=@home "$p
 mount -o noatime,compress=zstd,ssd,space_cache=v2,discard=async,subvol=@var "$part2" /mnt/var
 mount -o noatime,compress=zstd,ssd,space_cache=v2,discard=async,subvol=@snapshots "$part2" /mnt/.snapshots
 
+btrfs subvolume list /mnt
+read
+
 # Prepare chroot
 mkdir -p /mnt/{proc,sys,dev,run}
 mount --types proc /proc /mnt/proc
